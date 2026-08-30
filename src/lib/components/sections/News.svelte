@@ -3,6 +3,7 @@
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
 	import news from '@/lib/data/news.json';
 	import type { NewsData } from '@/lib/data/types';
+	import { toDatetime } from '@/lib/utils/date';
 
 	/**
 	 * NEWS（カンプの NEWS）
@@ -13,13 +14,6 @@
 	 */
 
 	const data: NewsData = news;
-
-	/** "2026.8.22" のような表記を datetime 属性用の ISO 8601 に直す */
-	const toDatetime = (date: string) => {
-		const [y, m, d] = date.split('.');
-		if (!y || !m || !d) return undefined;
-		return `${y}-${m.padStart(2, '0')}-${d.padStart(2, '0')}`;
-	};
 </script>
 
 <Container tag="section">

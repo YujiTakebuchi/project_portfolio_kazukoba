@@ -94,6 +94,33 @@ export type NewsData = {
 	link: string;
 };
 
+/**
+ * NEWS ページの 1 件
+ *
+ * TOP の NewsItem と同じ CMS のコレクションを想定しているが、
+ * 一覧ページは本文まで持つ（詳細ページを作るときはこれを使う）。
+ */
+export type NewsArticle = {
+	/**
+	 * 詳細ページの URL に使う識別子（/news/[id]）。
+	 * CMS 側で定義される id をそのまま入れる想定で、いまは連番の仮値。
+	 */
+	id: string;
+	/** カンプの表記に合わせた "2026.8.22" 形式 */
+	date: string;
+	title: string;
+	/** CMS が吐く HTML をそのまま持つ生テキスト */
+	body: string;
+};
+
+/** NEWS ページ（一覧＋ページネーション） */
+export type NewsPageData = {
+	/** 1 ページあたりの表示件数。カンプは 10 件 */
+	perPage: number;
+	/** 並び順がそのまま一覧の表示順になる（新しい順） */
+	items: NewsArticle[];
+};
+
 /** フッター */
 export type FooterData = {
 	copyright: string;
