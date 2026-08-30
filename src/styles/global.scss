@@ -1,0 +1,88 @@
+@use "./var" as v;
+@use "./mixin" as m;
+@use "./function" as f;
+@use "./reset";
+
+// =============================================================
+// ベースレイアウトの3つの幅
+// =============================================================
+//
+//   画面幅       : --screen-w  = 縦スクロールバーを除いた実表示幅
+//   ベース幅     : --base-w    = min(画面幅, 最大ベース幅)
+//   コンテンツ幅 : --content-w = ベース幅 * 割合
+//
+// --vw は「ベース幅の 1%」。f.vw() はこれを使って
+// デザインカンプの数値をリキッドなサイズに変換する。
+//
+// 画面幅が最大ベース幅を超えると、ベース幅はそれ以上大きくならず、
+// 余った左右のスペースが .side に振り分けられる（スプリットレイアウト）。
+//
+// --vw / --screen-w の実体は ViewportMeasure.svelte が px で書き込む。
+// vw 単位は多用すると再計算が重くなるため、CSS 側では使わない。
+// :root の値はスクリプト実行前（SSR / ハイドレーション前）のフォールバック。
+
+:root {
+	// --- W < 1024px : モバイルレイアウト ---
+	--max-base-w: #{v.$maxBaseWSp}px;
+	--content-ratio: #{v.$contentRatioSp};
+
+	// --- W >= 1024px : PC レイアウト ---
+	@include m.mq("pc") {
+		--max-base-w: #{v.$maxBaseWPc}px;
+		--content-ratio: #{v.$contentRatioPc};
+	}
+
+	// フォールバック。マウント後は JS の px 値で上書きされる。
+	// 100vw はスクロールバーを含むため、ハイドレーション前は
+	// フルブリード要素がわずかにあふれる。.split の overflow-x: clip で抑える。
+	--screen-w: 100vw;
+	--vw: calc(min(100vw, var(--max-base-w)) / 100);
+
+	// 以降はすべて --vw から導出するため vw 単位を含まない
+	--base-w: calc(var(--vw) * 100);
+	--content-w: calc(var(--base-w) * var(--content-ratio));
+}
+
+// =============================================================
+// ベース
+// =============================================================
+
+html {
+	// スクロールバーの有無でレイアウトが横にずれないよう、常に領域を確保する。
+	// ドロワーを開いてスクロールを止めたときのガタつきもこれで防げる。
+	scrollbar-gutter: stable;
+}
+
+html,
+body {
+	width: 100%;
+}
+
+body {
+	// 縦スクロールは body（ページ本来のスクロール）が担当する
+	background-color: v.$c-bg;
+	color: v.$c-text;
+
+	// カンプの本文スタイル（sp/body_JP, pc/body_JP）
+	@include m.font(f.vw(14), 1.7, 0.05);
+
+	@include m.mq("pc") {
+		@include m.font(f.vwPc(14), 1.8, 0.07);
+	}
+}
+
+::selection {
+	background-color: v.$c-text;
+	color: v.$c-bg;
+}
+
+// =============================================================
+// スクロールロック
+// =============================================================
+//
+// SP のドロワーメニューを開いている間、背面のスクロールを止める。
+
+html[data-scroll-lock],
+html[data-scroll-lock] body {
+	overflow: hidden;
+}

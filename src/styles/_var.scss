@@ -1,0 +1,50 @@
+// =============================================================
+// デザイン変数
+// =============================================================
+
+// ----- デザインカンプ基準幅 -------------------------------------
+// f.vw() / f.vwTab() / f.vwPc() が「1」として扱う基準幅。
+$desWSp: 375; // SP デザインカンプ幅
+$desWTab: 768; // Tab デザインカンプ幅
+$desWPc: 1280; // PC デザインカンプ幅
+
+// ----- ブレークポイント -----------------------------------------
+// SP < 768 < Tab < 1024 < PC
+$bpSpMax: 767.98;
+$bpTabMin: 768;
+$bpPcMin: 1024;
+
+// ----- ベース幅（サイト全体の幅）の上限 --------------------------
+// 画面幅がこれを超えたら、超過分は左右の .side に振り分けられる。
+// JS 側のミラーは src/lib/config/layout.ts。変更したら両方揃えること。
+$maxBaseWSp: 835; // W <  1024px : モバイルレイアウト
+$maxBaseWPc: 1280; // W >= 1024px : PC レイアウト
+
+// ----- コンテンツ幅（ベース幅に対する割合） ----------------------
+// カンプ上は PC 1180/1280、SP 335/375。
+$contentRatioSp: 0.89; // 89%
+$contentRatioPc: 0.92; // 92%
+
+// ----- カラー ---------------------------------------------------
+// Figma のカラー変数名をコメントに残している。
+$c-bg: #f2f2f2; // SOFT WHITE : 背景
+$c-text: #454545; // KG        : 本文
+$c-accent: #47425d; // KB        : ボタン / 展示タイトル
+$c-line: #bdbdbd; // SUB GRAY  : NEWS の罫線
+$c-sub: #8f8f8f; // KV の "Photographer"
+$c-panel: #e1dfdf; // EXHIBITION の背景パネル
+
+// ----- フォントファミリー ---------------------------------------
+// 実際の指定は m.font() 経由で行う。個別に font-family を書かないこと。
+//   $f-ja   : 日本語（m.font() の $fam = ""）
+//   $f-en   : 英語本文 / 日付 / フッター（$fam = "en"）
+//   $f-mont : ロゴ / ナビ / ボタンなどの英字見出し（$fam = "mont"）
+$f-ja:
+	"Noto Sans JP", "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic", "Meiryo",
+	sans-serif;
+$f-en: "Source Sans 3", "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+$f-mont: "Montserrat", "Helvetica Neue", Arial, sans-serif;
+
+// ----- モーション -----------------------------------------------
+$hoverOpacity: 0.6;
+$hoverDuration: 0.3s;

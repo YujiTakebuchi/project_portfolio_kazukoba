@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(node -v)",
+      "PowerShell(npm -v)",
+      "PowerShell(npx --yes sv@latest create . --template minimal --types ts --no-add-ons --no-install 2>&1)",
+      "PowerShell(npm --prefix $dst pkg set name=portfolio)",
+      "PowerShell(npm --prefix $dst install 2>&1)",
+      "PowerShell(npm --prefix $dst install -D sass-embedded @sveltejs/adapter-static 2>&1)",
+      "PowerShell(npm --prefix $dst run build 2>&1)",
+      "PowerShell(npm --prefix $dst run check 2>&1)"
+    ]
+  }
+}

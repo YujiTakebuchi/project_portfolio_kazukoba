@@ -1,0 +1,12 @@
+{
+	"images": [
+		{ "src": "/img/photo/photo-01.png", "alt": "" },
+		{ "src": "/img/photo/photo-02.png", "alt": "" },
+		{ "src": "/img/photo/photo-03.png", "alt": "" },
+		{ "src": "/img/photo/photo-04.png", "alt": "" },
+		{ "src": "/img/photo/photo-05.png", "alt": "" },
+		{ "src": "/img/photo/photo-06.png", "alt": "" },
+		{ "src": "/img/photo/photo-07.png", "alt": "" },
+		{ "src": "/img/photo/photo-08.png", "alt": "" }
+	]
+}

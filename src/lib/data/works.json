@@ -1,0 +1,10 @@
+{
+	"link": "/works",
+	"images": [
+		{ "src": "/img/photo/photo-04.png", "alt": "作品写真" },
+		{ "src": "/img/photo/photo-01.png", "alt": "作品写真" },
+		{ "src": "/img/photo/photo-05.png", "alt": "作品写真" },
+		{ "src": "/img/photo/photo-06.png", "alt": "作品写真" },
+		{ "src": "/img/photo/photo-07.png", "alt": "作品写真" }
+	]
+}
