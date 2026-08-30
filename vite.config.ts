@@ -12,7 +12,6 @@ import { defineConfig } from 'vite';
  */
 const PLANNED_ROUTES = [
 	'/about',
-	'/works',
 	'/exhibition',
 	'/news',
 	'/contact',

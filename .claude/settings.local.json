@@ -8,7 +8,15 @@
       "PowerShell(npm --prefix $dst install 2>&1)",
       "PowerShell(npm --prefix $dst install -D sass-embedded @sveltejs/adapter-static 2>&1)",
       "PowerShell(npm --prefix $dst run build 2>&1)",
-      "PowerShell(npm --prefix $dst run check 2>&1)"
+      "PowerShell(npm --prefix $dst run check 2>&1)",
+      "Bash(cd \"c:/Users/takey/own/engineer/MyProject/emoto/prog/portfolio\" && ls -R .claude && cat .claude/settings.local.json 2>/dev/null; cat .mcp.json 2>/dev/null; ls ~/.claude/ 2>/dev/null)",
+      "Read(//c/Users/takey/.claude/**)",
+      "WebFetch(domain:www.figma.com)",
+      "Bash(python -c ' *)",
+      "PowerShell($p = Join-Path $HOME \".claude.json\"; if \\(Test-Path $p\\) { $d = Get-Content $p -Raw | ConvertFrom-Json; \"GLOBAL: \" + \\(\\($d.mcpServers.PSObject.Properties.Name\\) -join \", \"\\); $d.projects.PSObject.Properties | ForEach-Object { $s = $_.Value.mcpServers; if \\($s -and $s.PSObject.Properties.Name.Count -gt 0\\) { \"PROJECT $\\($_.Name\\): \" + \\(\\($s.PSObject.Properties.Name\\) -join \", \"\\) } } } else { \"no ~/.claude.json\" })",
+      "PowerShell($p = Join-Path $HOME \".claude.json\"; $d = Get-Content $p -Raw | ConvertFrom-Json -AsHashtable; \"GLOBAL: [\" + \\(\\($d.mcpServers.Keys\\) -join \", \"\\) + \"]\"; foreach \\($k in $d.projects.Keys\\) { $s = $d.projects[$k].mcpServers; if \\($s -and $s.Keys.Count -gt 0\\) { \"PROJECT $k : \" + \\(\\($s.Keys\\) -join \", \"\\) } })",
+      "PowerShell($p = Join-Path $HOME \".claude.json\"; $d = Get-Content $p -Raw | ConvertFrom-Json -AsHashtable; $d.projects[\"C:/Users/takey/own/engineer/MyProject/emoto/prog/portfolio\"].mcpServers | ConvertTo-Json -Depth 6)",
+      "PowerShell(Set-Location \"C:\\\\Users\\\\takey\\\\own\\\\engineer\\\\MyProject\\\\emoto\\\\prog\\\\portfolio\"; \\(Get-Command claude -ErrorAction SilentlyContinue\\).Source; claude mcp list 2>&1 | Select-Object -First 15)"
     ]
   }
 }

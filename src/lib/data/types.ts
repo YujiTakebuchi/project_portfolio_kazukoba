@@ -10,6 +10,9 @@ export type Photo = {
 	src: string;
 	/** 装飾目的の画像は空文字にする */
 	alt: string;
+	/** 元画像のピクセルサイズ。読み込み前の場所取り（CLS 対策）に使う */
+	width?: number;
+	height?: number;
 };
 
 /** ヘッダーのナビゲーション項目 */
@@ -33,10 +36,37 @@ export type AboutData = {
 	link: string;
 };
 
-/** WORKS スライダー */
+/** WORKS スライダー（TOP のセクション） */
 export type WorksData = {
 	images: Photo[];
 	link: string;
+};
+
+/**
+ * WORKS の作品 1 点
+ *
+ * 拡大表示のキャプションに出す情報。作品名以外は任意で、
+ * 無い項目は行ごと出力しない。
+ */
+export type Work = Photo & {
+	/** 作品名 */
+	title: string;
+	/** 出展した展示 */
+	exhibition?: string;
+	/** 機材（ボディ / レンズ） */
+	gear?: string;
+	/** 撮影設定 */
+	settings?: string;
+	/** 撮影地。ラベル「Location：」はテンプレート側で付ける */
+	location?: string;
+	/** プリントサイズ。ラベル「size：」はテンプレート側で付ける */
+	size?: string;
+};
+
+/** WORKS ページ（一覧グリッド＋拡大表示） */
+export type WorksPageData = {
+	/** 並び順がそのまま一覧・拡大表示の送り順になる */
+	items: Work[];
 };
 
 /** EXHIBITION */

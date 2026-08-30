@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import Container from '$lib/components/Container.svelte';
 	import { NAV_ITEMS, SITE_TITLE } from '@/lib/data/nav';
 
@@ -8,9 +9,20 @@
 	 * 幅はコンテンツ幅。PC は横並びのナビ、SP はハンバーガー。
 	 * SP のドロワー自体はカンプに存在しないため、PC のナビ項目を
 	 * そのまま縦に並べた最小構成にしてある。
+	 *
+	 * 表示中のページの項目には下線を引く（カンプ WORKS_pc の
+	 * ナビ下の SUB GRAY の罫線）。カンプ上は PC のみだが、
+	 * aria-current は SP のドロワーにも付けている。
 	 */
 
 	let isOpen = $state(false);
+
+	/** 現在地の項目か。TOP は完全一致、それ以外は下層ページも含める */
+	const isCurrent = (href: string) => {
+		const path = page.url.pathname;
+		if (href === '/') return path === '/';
+		return path === href || path.startsWith(`${href}/`);
+	};
 
 	const close = () => (isOpen = false);
 
@@ -40,7 +52,12 @@
 				<ul class="header__list">
 					{#each NAV_ITEMS as item (item.href)}
 						<li>
-							<a class="header__link" href={item.href}>
+							<a
+								class="header__link"
+								class:header__link--current={isCurrent(item.href)}
+								href={item.href}
+								aria-current={isCurrent(item.href) ? 'page' : undefined}
+							>
 								<span>{item.label}</span>
 								{#if item.icon}
 									<img class="header__icon" src={item.icon} alt="" width="21" height="26" />
@@ -77,7 +94,12 @@
 	<ul class="drawer__list">
 		{#each NAV_ITEMS as item (item.href)}
 			<li>
-				<a class="drawer__link" href={item.href} onclick={close}>
+				<a
+					class="drawer__link"
+					href={item.href}
+					aria-current={isCurrent(item.href) ? 'page' : undefined}
+					onclick={close}
+				>
 					<span>{item.label}</span>
 					{#if item.icon}
 						<img class="drawer__icon" src={item.icon} alt="" width="21" height="26" />
@@ -132,11 +154,23 @@
 		}
 
 		&__link {
+			position: relative;
 			display: inline-flex;
 			align-items: center;
 			gap: f.vwPc(3);
 			@include m.font(f.vwPc(16), 1.2, 0.1, 400, "mont");
 			@include m.linkHover;
+
+			// 現在地の下線（カンプ: 文字の下 6、SUB GRAY 1px）。
+			// flex の中身を押し下げないよう疑似要素で描く
+			&--current::after {
+				content: "";
+				position: absolute;
+				top: calc(100% + #{f.vwPc(6)});
+				left: 0;
+				right: 0;
+				border-top: f.vwPc(1) solid v.$c-line;
+			}
 		}
 
 		&__icon {

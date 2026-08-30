@@ -1,0 +1,96 @@
+{
+	"items": [
+		{
+			"src": "/img/photo/photo-01.png",
+			"alt": "石畳の広場を上から見下ろした写真",
+			"width": 1200,
+			"height": 800,
+			"title": "Street",
+			"exhibition": "第56回足立区展 2023",
+			"gear": "α7R II / FE 24-70mm F4 ZA OS",
+			"settings": "A mode / F8 (1/125 sec.) /  Day light / ISO 100",
+			"location": "Rothenburg Germany",
+			"size": "半切"
+		},
+		{
+			"src": "/img/photo/photo-08.png",
+			"alt": "作品写真 02",
+			"width": 712,
+			"height": 1006,
+			"title": "Alley",
+			"gear": "α7R II / FE 24-70mm F4 ZA OS",
+			"settings": "A mode / F5.6 (1/250 sec.) /  Day light / ISO 200",
+			"location": "Rothenburg Germany",
+			"size": "四切"
+		},
+		{
+			"src": "/img/photo/photo-06.png",
+			"alt": "作品写真 03",
+			"width": 400,
+			"height": 400,
+			"title": "Window",
+			"exhibition": "第55回足立区展 2022",
+			"gear": "α7R II / FE 55mm F1.8 ZA",
+			"settings": "A mode / F2.8 (1/500 sec.) /  Day light / ISO 100",
+			"location": "Praha Czech",
+			"size": "四切"
+		},
+		{
+			"src": "/img/photo/photo-03.png",
+			"alt": "作品写真 04",
+			"width": 1200,
+			"height": 800,
+			"title": "Morning",
+			"gear": "α7R II / FE 24-70mm F4 ZA OS",
+			"settings": "A mode / F11 (1/60 sec.) /  Day light / ISO 100",
+			"location": "Wien Austria",
+			"size": "半切"
+		},
+		{
+			"src": "/img/photo/photo-07.png",
+			"alt": "作品写真 05",
+			"width": 400,
+			"height": 600,
+			"title": "Stairs",
+			"exhibition": "第54回足立区展 2021",
+			"gear": "α7R II / FE 55mm F1.8 ZA",
+			"settings": "A mode / F4 (1/125 sec.) /  Day light / ISO 400",
+			"location": "Lisboa Portugal",
+			"size": "四切"
+		},
+		{
+			"src": "/img/photo/photo-02.png",
+			"alt": "作品写真 06",
+			"width": 400,
+			"height": 267,
+			"title": "Harbor",
+			"gear": "α7R II / FE 24-70mm F4 ZA OS",
+			"settings": "A mode / F8 (1/320 sec.) /  Day light / ISO 100",
+			"location": "Porto Portugal",
+			"size": "半切"
+		},
+		{
+			"src": "/img/photo/photo-04.png",
+			"alt": "作品写真 07",
+			"width": 1200,
+			"height": 800,
+			"title": "Rooftop",
+			"exhibition": "第53回足立区展 2020",
+			"gear": "α7R II / FE 24-70mm F4 ZA OS",
+			"settings": "A mode / F9 (1/200 sec.) /  Day light / ISO 100",
+			"location": "Firenze Italy",
+			"size": "半切"
+		},
+		{
+			"src": "/img/photo/photo-05.png",
+			"alt": "作品写真 08",
+			"width": 400,
+			"height": 303,
+			"title": "Bridge",
+			"gear": "α7R II / FE 24-70mm F4 ZA OS",
+			"settings": "A mode / F8 (1/160 sec.) /  Day light / ISO 100",
+			"location": "Budapest Hungary",
+			"size": "四切"
+		}
+	]
+}
