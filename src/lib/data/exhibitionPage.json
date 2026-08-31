@@ -1,0 +1,34 @@
+{
+	"items": [
+		{
+			"id": "sandaishashin-2026",
+			"label": "三代写心（2026）",
+			"image": {
+				"src": "/img/photo/photo-08.png",
+				"alt": "「三代写心」展示会ポスター",
+				"width": 712,
+				"height": 1006
+			},
+			"title": "三代写心",
+			"subtitle": "ーカメラ三陽堂に宿った三人の写真家ー",
+			"date": "2026.10.14 - 19",
+			"period": "テキストテキストテキストテキストテキストテキスト",
+			"venue": "テキストテキストテキストテキストテキストテキスト"
+		},
+		{
+			"id": "duality-2019",
+			"label": "Duality（2019）",
+			"image": {
+				"src": "/img/photo/photo-07.png",
+				"alt": "「Duality」展示会ポスター",
+				"width": 400,
+				"height": 600
+			},
+			"title": "Duality",
+			"subtitle": "ー光と影のあいだにあるものー",
+			"date": "2019.5.10 - 19",
+			"period": "テキストテキストテキストテキストテキストテキスト",
+			"venue": "テキストテキストテキストテキストテキストテキスト"
+		}
+	]
+}

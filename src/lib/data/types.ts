@@ -81,6 +81,40 @@ export type ExhibitionData = {
 	link: string;
 };
 
+/**
+ * EXHIBITION ページの展示 1 件
+ *
+ * 切り替えボタンのラベルだけは「三代写心（2026）」のように年号付きで、
+ * 見出しの title とは別物なので分けて持つ。
+ */
+export type ExhibitionEntry = {
+	/** 切り替えボタンと本文の紐付け（aria-controls）に使う識別子 */
+	id: string;
+	/** 切り替えボタンのラベル */
+	label: string;
+	/** 展示会ポスター。カンプの縦横比は 17:24 */
+	image: Photo;
+	title: string;
+	subtitle: string;
+	/** 見出しの下に出す会期（"2026.10.14 - 19"） */
+	date: string;
+	/** 会期。ラベル「会期：」はテンプレート側で付ける */
+	period: string;
+	/** 会場。ラベル「会場：」はテンプレート側で付ける */
+	venue: string;
+};
+
+/**
+ * EXHIBITION ページ
+ *
+ * 過去の展示を切り替えボタンで出し分ける。TOP のセクション
+ * （ExhibitionData）は「最新の 1 件」だけを持つ別のデータ。
+ */
+export type ExhibitionPageData = {
+	/** 並び順がそのまま切り替えボタンの並び順。先頭が初期表示 */
+	items: ExhibitionEntry[];
+};
+
 /** NEWS の 1 件 */
 export type NewsItem = {
 	date: string;
