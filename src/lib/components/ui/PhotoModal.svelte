@@ -39,6 +39,16 @@
 	const isOpen = $derived(index !== null);
 	const current = $derived(index === null ? undefined : items[index]);
 
+	/**
+	 * 縦長の作品か（PC の表示高さを切り替える）
+	 *
+	 * 縦長は画面高さの 86%、横長・正方形は 71% を基準にする。
+	 * JSON に元画像のサイズが無いときは横長扱い（71%）。
+	 */
+	const isPortrait = $derived(
+		!!current?.width && !!current?.height && current.height > current.width
+	);
+
 	const close = () => (index = null);
 
 	/** step 分だけ送る。端まで来たら反対側へループする */
@@ -86,7 +96,13 @@
 	<button class="modal__backdrop" type="button" tabindex="-1" aria-hidden="true" onclick={close}
 	></button>
 
-	<div class="modal__inner">
+	<div
+		class="modal__inner"
+		class:modal__inner--portrait={isPortrait}
+		style:--photo-ratio={current?.width && current?.height
+			? current.width / current.height
+			: undefined}
+	>
 		<button class="modal__close" type="button" onclick={close} aria-label="閉じる">
 			<img src="/img/icon/close.svg" alt="" width="45" height="27" />
 		</button>
@@ -225,9 +241,30 @@
 			width: var(--content-w);
 			height: 100%;
 			margin-inline: auto;
-			// カンプ: SP は写真の上端 80 / 下 18、PC は 66 / 20
+			// カンプ: SP は写真の上端 80 / 下 18
 			padding: f.vw(80) 0 f.vw(18);
 			pointer-events: none;
+
+			// PC の写真の高さ（__figure が使う）。
+			//
+			//   --photo-h       : 画面高さに対する基準値
+			//   --photo-reserve : 写真の上下に必ず要る高さ
+			//                     （上パディング 20 + 下パディング 20
+			//                      + 矢印 12+45 + フッター 27+23.8）
+			//   --photo-ratio   : 元画像の縦横比（w/h）。テンプレートから渡す
+			//
+			// 低い画面でこれを割り込むと矢印やフッターが押し出されるので、
+			// そのときだけ reserve 側が効いて写真が縮む。
+			--photo-h: 71svh;
+			// 上パディング 66 + 下パディング 20 + フッター 27+23.8。
+			// 矢印は absolute なので流れの高さを取らない
+			--photo-reserve: #{f.vwPc(137)};
+			// 比率が不明なときは幅で頭打ちにしない
+			--photo-ratio: 0.0001;
+
+			&--portrait {
+				--photo-h: 86svh;
+			}
 
 			@include m.mq("pc") {
 				padding: f.vwPc(66) 0 f.vwPc(20);
@@ -279,8 +316,10 @@
 			margin-block: auto;
 
 			@include m.mq("pc") {
-				// 写真の下端でキャプションを揃える
+				// 写真の下端でキャプションを揃える。
+				// 写真 + キャプションのまとまりを画面左右中央に置く
 				display: flex;
+				justify-content: center;
 				align-items: flex-end;
 				gap: f.vwPc(26);
 			}
@@ -288,29 +327,63 @@
 
 		&__figure {
 			@include m.mq("pc") {
-				// 写真はキャプション側に寄せる（カンプの左端 124 はこの結果）
-				flex: 1;
+				// 写真の幅ぶんだけ取る（列を埋めない）。
+				// これで写真 + キャプションのまとまりが中央に寄る
+				flex: none;
 				min-width: 0;
 				display: flex;
 				justify-content: flex-end;
 				align-items: flex-end;
+
+				// 写真の表示高さ。ここを確定させて中の img を縦幅合わせにする。
+				//
+				// max-height と height: auto の組み合わせだと、元画像が小さい
+				// ときに内在サイズどまりで拡大されない（400px 幅の作品が
+				// そのまま小さく出てしまう）。高さを確定させておけば
+				// 元画像の大きさに関わらず同じ高さで表示できる。
+				//
+				// 基準は画面高さに対する割合（縦長 86% / 横長 71%）。
+				// 固定 px の上限は持たせず、画面が高いほど写真も大きくなる。
+				//
+				// 第 3 項は写真エリアの幅（1180 − キャプション 380 − 余白 26）
+				// いっぱいまで広げたときの高さ。横長の作品は高い画面だと
+				// 高さより先に幅で頭打ちになるので、これを入れておかないと
+				// 枠だけ高くなって写真の上に空きができる。
+				height: min(
+					var(--photo-h),
+					calc(100svh - var(--photo-reserve)),
+					calc(#{f.vwPc(774)} / var(--photo-ratio))
+				);
 			}
 		}
 
-		// SP は横幅いっぱい、PC はカンプの高さ 466 で頭打ち。
-		// どちらも低い画面ではビューポートに収まるところまで縮む
-		// （引く値は上下パディング・矢印・フッターのぶん）。
+		// SP は横幅いっぱい。低い画面でも収まるように上限だけ持たせる。
+		//
+		// ここを f.vw() で引くとベース幅に比例してしまい、同じ SP
+		// レイアウトでも幅の広い端末（768〜1023px）で控除が効きすぎる。
+		// 画面高に対する割合で持つ（375×750 でこれまでと同じ 410 相当）。
 		&__img {
 			width: 100%;
 			height: auto;
-			max-height: calc(100svh - #{f.vw(340)});
+			max-height: 55svh;
 			object-fit: contain;
 
 			@include m.mq("pc") {
+				// 縦幅合わせ。__figure が高さを決めているので、それに揃える。
+				//
+				// SP 用の max-height は必ず打ち消すこと。f.vw() は SP 基準
+				// （375）の関数なので、PC のベース幅 1280 では
+				// 340 × 1280/375 ≒ 1160px に膨らみ、画面高がそれ未満だと
+				// max-height が 0 以下に潰れて写真が出なくなる。
+				max-height: none;
+
+				// 横に長い作品は max-width で頭打ちにし、object-fit: contain が
+				// 縦横比を保つ。そのとき余るのは上側だけにして、
+				// キャプションとの下端揃えを崩さない
 				width: auto;
 				max-width: 100%;
-				height: auto;
-				max-height: min(#{f.vwPc(466)}, calc(100svh - #{f.vwPc(194)}));
+				height: 100%;
+				object-position: bottom;
 			}
 		}
 
@@ -372,8 +445,14 @@
 			margin-top: f.vw(12);
 
 			@include m.mq("pc") {
+				// 流れから外して、コンテンツ（写真 + キャプション）の
+				// 下端と矢印の下端が揃うようにする。
+				// bottom はフッターぶん（27 + 23.8）＋下パディング 20
+				position: absolute;
+				right: 0;
+				bottom: f.vwPc(71);
 				gap: f.vwPc(20);
-				margin-top: f.vwPc(12);
+				margin-top: 0;
 			}
 		}
 
