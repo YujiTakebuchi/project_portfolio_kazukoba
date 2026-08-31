@@ -127,3 +127,58 @@ export type FooterData = {
 	noticeLabel: string;
 	noticeHref: string;
 };
+
+/** ABOUT の SNS リンク。type がそのままアイコン（/img/icon/sns-{type}.svg）になる */
+export type SnsLink = {
+	type: 'x' | 'instagram' | 'youtube';
+	/** 読み上げ・title 用の名称 */
+	label: string;
+	href: string;
+	/** アイコンの下に出すアカウント名。カンプでは Instagram のみ */
+	handle?: string;
+};
+
+/** 解像度違いの書き出し 1 枚 */
+export type ImageSource = {
+	src: string;
+	/** 元画像のピクセルサイズ。読み込み前の場所取り（CLS 対策）に使う */
+	width: number;
+	height: number;
+};
+
+/**
+ * ABOUT のビジュアル
+ *
+ * PC / SP で書き出しサイズが分かれているので picture で出し分ける。
+ * 構図は同じで解像度だけが違う。
+ */
+export type AboutVisual = {
+	alt: string;
+	pc: ImageSource;
+	sp: ImageSource;
+};
+
+/**
+ * 受賞履歴の 1 年分
+ *
+ * 同じ年に複数件ぶら下がるので、中身は CMS が吐く HTML をそのまま持つ。
+ * 目印として使うクラスは AboutPage 側の :global に書いてある。
+ */
+export type AwardRow = {
+	year: string;
+	/** CMS が吐く HTML をそのまま持つ生テキスト */
+	contents: string;
+};
+
+/** ABOUT ページ */
+export type AboutPageData = {
+	name: string;
+	visual: AboutVisual;
+	/** 段落の区切りは空行（\n\n）。white-space で反映する */
+	ja: string;
+	en: string;
+	sns: SnsLink[];
+	awards: AwardRow[];
+	exhibitions: string[];
+	books: string[];
+};

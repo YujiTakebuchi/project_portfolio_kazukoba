@@ -169,7 +169,7 @@
 				top: calc(100% + #{f.vwPc(6)});
 				left: 0;
 				right: 0;
-				border-top: f.vwPc(1) solid v.$c-line;
+				border-top: f.vwPc(1) solid var(--c-page-line);
 			}
 		}
 
@@ -177,6 +177,8 @@
 			flex: none;
 			width: f.vwPc(21);
 			height: f.vwPc(26);
+			// 単色 SVG をページの配色に合わせる（global.scss の .theme--dark）
+			filter: var(--icon-filter);
 		}
 
 		// --- SP ハンバーガー ---
@@ -192,6 +194,7 @@
 			img {
 				width: 100%;
 				height: auto;
+				filter: var(--icon-filter);
 			}
 		}
 	}
@@ -205,7 +208,7 @@
 		z-index: 100;
 		display: grid;
 		place-items: center;
-		background-color: v.$c-bg;
+		background-color: var(--c-page-bg);
 		opacity: 0;
 		visibility: hidden;
 		transition:
@@ -239,6 +242,7 @@
 			flex: none;
 			width: f.vw(21);
 			height: f.vw(26);
+			filter: var(--icon-filter);
 		}
 	}
 </style>

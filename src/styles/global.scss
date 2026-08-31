@@ -41,6 +41,36 @@
 	// 以降はすべて --vw から導出するため vw 単位を含まない
 	--base-w: calc(var(--vw) * 100);
 	--content-w: calc(var(--base-w) * var(--content-ratio));
+
+	// --- 配色（ページ単位で反転させる） ---
+	// ヘッダー / フッター / ドロワーはこの3つだけを見る。
+	// 反転するページは .theme--dark（下記）で上書きする。
+	--c-page-bg: #{v.$c-bg};
+	--c-page-text: #{v.$c-text};
+	--c-page-line: #{v.$c-line};
+
+	// 単色（#454545）で書き出したアイコンに掛けるフィルタ。
+	// 明るい配色では素のままなので none。
+	--icon-filter: none;
+}
+
+// =============================================================
+// ダーク配色のページ
+// =============================================================
+//
+// ABOUT だけは背景を KB で塗りつぶした反転ページ（カンプの ABOUT_pc /
+// ABOUT_sp）。+layout.svelte が .split に付け外しするので、
+// 中のコンポーネントは --c-page-* を見るだけで両方に対応できる。
+//
+// アイコンは #454545 の単色 SVG で書き出されているため、
+// brightness(0) で一度真っ黒に潰してから invert() で明るさだけ戻す。
+// （0.949 * 255 = 242 = SOFT WHITE）
+
+.theme--dark {
+	--c-page-bg: #{v.$c-accent};
+	--c-page-text: #{v.$c-bg};
+	--c-page-line: #{v.$c-dark-sub};
+	--icon-filter: brightness(0) invert(0.949);
 }
 
 // =============================================================
@@ -51,6 +81,12 @@ html {
 	// スクロールバーの有無でレイアウトが横にずれないよう、常に領域を確保する。
 	// ドロワーを開いてスクロールを止めたときのガタつきもこれで防げる。
 	scrollbar-gutter: stable;
+
+	// オーバースクロール（ゴムバンド）で覗く下地もページの色に合わせる。
+	// .theme--dark は .split に付くので、html からは :has() で拾う。
+	&:has(.theme--dark) {
+		background-color: v.$c-accent;
+	}
 }
 
 html,
@@ -59,9 +95,11 @@ body {
 }
 
 body {
-	// 縦スクロールは body（ページ本来のスクロール）が担当する
+	// 縦スクロールは body（ページ本来のスクロール）が担当する。
+	// 実際に見えるのは .split が塗る色で、ここはオーバースクロール時に
+	// 覗く下地。ダークページでは html 側（下記）で揃える。
 	background-color: v.$c-bg;
-	color: v.$c-text;
+	color: var(--c-page-text);
 
 	// カンプの本文スタイル（sp/body_JP, pc/body_JP）
 	@include m.font(f.vw(14), 1.7, 0.05);

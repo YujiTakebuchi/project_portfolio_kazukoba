@@ -10,7 +10,7 @@ import { defineConfig } from 'vite';
  * prerender のクローラが 404 でビルドを止めないようにここで許可する。
  * 該当ページを実装したらこの配列から外すこと。
  */
-const PLANNED_ROUTES = ['/about', '/exhibition', '/contact', '/shop', '/copyright'];
+const PLANNED_ROUTES = ['/exhibition', '/contact', '/shop', '/copyright'];
 
 export default defineConfig({
 	plugins: [

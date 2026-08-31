@@ -35,6 +35,14 @@ $c-sub: #8f8f8f; // KV の "Photographer"
 $c-panel: #e1dfdf; // EXHIBITION の背景パネル
 $c-link: #4ca0ff; //           : NEWS 詳細の本文中リンク
 
+// ----- ダーク配色（ABOUT） --------------------------------------
+// ABOUT は背景を KB で塗りつぶした反転ページ。
+// 背景 / ヘッダー / フッターの色は --c-page-* 経由で切り替える
+// （global.scss の .theme--dark）。ここは本文側で直接使う分。
+$c-dark-text: #ffffff; //           : ABOUT の本文・見出し
+$c-dark-sub: #8d97ce; //           : ABOUT の英文・英字ラベル・ヘッダーの下線
+$c-dark-line: #5e6695; //           : ABOUT のセクション区切り線
+
 // ----- フォントファミリー ---------------------------------------
 // 実際の指定は m.font() 経由で行う。個別に font-family を書かないこと。
 //   $f-ja   : 日本語（m.font() の $fam = ""）

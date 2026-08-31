@@ -1,0 +1,49 @@
+{
+	"name": "Kazu Kobayashi",
+	"visual": {
+		"alt": "河原でカメラを構える写真家 Kazu Kobayashi",
+		"pc": { "src": "/img/about/img_about_visual-pc.jpg", "width": 940, "height": 627 },
+		"sp": { "src": "/img/about/img_about_visual-sp.jpg", "width": 670, "height": 447 }
+	},
+	"ja": "1969年　東京都生まれ。 創業70年を超えるカメラ屋の3代目として生まれる。 子どもの頃からカメラに囲まれて育った生粋のカメラっこ。 毎年多くの展覧会に出展。永年のテーマは「光とその諧調」\n\n一般社団法人 秋耕会 理事/運営審査委員、日本写真会　会員、フォトマスター EX（総合）",
+	"en": "I was born in 1969 in Tokyo into a family of photographers. Both my father and grandfather are photographers and our family business is a photo and camera shop. I've been lucky to be surrounded by this art form since I was a small child. A theme I try to explore in my work is \"light-gradation\".\n\nOrganization of Arts Commissioner of Audition Syukoukai, Japan Photographic Society",
+	"sns": [
+		{ "type": "x", "label": "X", "href": "#" },
+		{
+			"type": "instagram",
+			"label": "Instagram（作品）",
+			"href": "https://www.instagram.com/kazukoba_art/",
+			"handle": "@kazukoba_art"
+		},
+		{
+			"type": "instagram",
+			"label": "Instagram（せかおわ）",
+			"href": "https://www.instagram.com/kazusekaowa/",
+			"handle": "@kazusekaowa"
+		},
+		{ "type": "youtube", "label": "YouTube", "href": "#" }
+	],
+	"awards": [
+		{
+			"year": "1994年",
+			"contents": "<p>第19回秋耕展　秋耕会賞</p>"
+		},
+		{
+			"year": "2006年",
+			"contents": "<p>東京都美術館80周年記念秋耕展 東京都知事賞</p>"
+		},
+		{
+			"year": "2009年",
+			"contents": "<p>第34回秋耕展　文部科学大臣賞<span class=\"en\">Commendation from the Minister of Education, Culture, Sports, Science and Technology</span></p><p>第82回日本写真会展　日本写真会会長賞</p><p>足立区展大賞</p>"
+		},
+		{
+			"year": "2019年",
+			"contents": "<p>第43回秋耕展　国土交通大臣賞<span class=\"note\">他</span></p>"
+		}
+	],
+	"exhibitions": ["“Duality\"  2019.2.27(Wed)- 3.10 (Sun)"],
+	"books": [
+		"写真がもっと楽しくなる　デジタル一眼レフ　フィルター撮影の教科書（インプレスジャパン）",
+		"CAPA特別編集　ソニーα NEX-7スーパーブック（学研パブリッシング）"
+	]
+}

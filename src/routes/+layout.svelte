@@ -1,9 +1,14 @@
 <script lang="ts">
+	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
+	import { themeOf } from '@/lib/config/theme';
 	import '@/styles/global.scss';
 
 	let { children } = $props();
+
+	/** ABOUT だけ背景を反転させる。配色は global.scss の .theme--dark */
+	const isDark = $derived(themeOf(page.url.pathname) === 'dark');
 </script>
 
 <svelte:head>
@@ -28,7 +33,7 @@
 <!-- メインコンテンツとは別レイヤーのサイズ計測用要素。--vw を px で供給する -->
 <ViewportMeasure />
 
-<div class="split">
+<div class="split" class:theme--dark={isDark}>
 	<div class="side" aria-hidden="true"></div>
 
 	<div class="center">
@@ -47,6 +52,13 @@
 		display: grid;
 		grid-template-columns: 100%;
 		width: 100%;
+		// 中身が短いページでも背景がビューポートを埋めるようにする
+		min-height: 100svh;
+
+		// ページの地の色。.side も含めて画面幅いっぱいを塗る。
+		// --c-page-* は :root の既定値か .theme--dark の上書きが入る。
+		background-color: var(--c-page-bg);
+		color: var(--c-page-text);
 
 		// フルブリード要素がスクロールバー分だけあふれても横スクロールさせない。
 		// clip は hidden と違いスクロールコンテナを作らないので、
