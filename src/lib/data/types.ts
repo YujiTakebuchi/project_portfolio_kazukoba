@@ -121,11 +121,28 @@ export type NewsPageData = {
 	items: NewsArticle[];
 };
 
-/** フッター */
+/**
+ * フッター
+ *
+ * noticeLabel（Copyright / Image Use）はページ遷移ではなく
+ * 利用規約モーダルを開くボタンなので、リンク先は持たない。
+ */
 export type FooterData = {
 	copyright: string;
 	noticeLabel: string;
-	noticeHref: string;
+};
+
+/** 利用規約モーダルの 1 言語分 */
+export type TermsSection = {
+	title: string;
+	/** 段落内の改行は \n で表現する（CSS の white-space: pre-line で反映） */
+	body: string;
+};
+
+/** 利用規約モーダル（日本語 + 英語の 2 ブロック） */
+export type TermsData = {
+	ja: TermsSection;
+	en: TermsSection;
 };
 
 /** ABOUT の SNS リンク。type がそのままアイコン（/img/icon/sns-{type}.svg）になる */

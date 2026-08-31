@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
+	import TermsModal from '@/lib/components/ui/TermsModal.svelte';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
 	import { themeOf } from '@/lib/config/theme';
 	import '@/styles/global.scss';
@@ -42,6 +43,15 @@
 
 	<div class="side" aria-hidden="true"></div>
 </div>
+
+<!--
+	利用規約モーダル
+
+	開くきっかけ（Copyright / Image Use）は全ページのフッターと
+	WORKS の拡大表示の中にあるが、実体はここに 1 つだけ置く。
+	開閉状態は @/lib/state/terms.svelte で共有している。
+-->
+<TermsModal />
 
 <style lang="scss">
 	@use "@/styles/var" as v;

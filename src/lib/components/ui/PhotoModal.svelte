@@ -1,6 +1,8 @@
 <script lang="ts">
 	import footer from '@/lib/data/footer.json';
 	import type { FooterData, Work } from '@/lib/data/types';
+	import { termsModal } from '@/lib/state/terms.svelte';
+	import { lockScroll } from '@/lib/utils/scrollLock';
 
 	/**
 	 * 作品の拡大表示モーダル（カンプの works_modal_pc / works_modal_sp）
@@ -53,14 +55,12 @@
 		else if (!isOpen && dialog.open) dialog.close();
 	});
 
-	// 開いている間は背面のスクロールを止める（ヘッダーのドロワーと同じ仕組み）
+	// 開いている間は背面のスクロールを止める（ヘッダーのドロワーと同じ仕組み）。
+	// 上に利用規約モーダルが重なることがあるので lockScroll() を通す
 	$effect(() => {
 		if (!isOpen) return;
 
-		const root = document.documentElement;
-		root.setAttribute('data-scroll-lock', '');
-
-		return () => root.removeAttribute('data-scroll-lock');
+		return lockScroll();
 	});
 
 	const onKeydown = (e: KeyboardEvent) => {
@@ -163,10 +163,14 @@
 		{/if}
 
 		<!-- カンプではモーダル内にもフッターがある（著作権表記を常に出すため）。
-		     見た目は Footer.svelte の PC / SP と同じ組みで、色だけ反転させている -->
+		     見た目は Footer.svelte の PC / SP と同じ組みで、色だけ反転させている。
+		     利用規約モーダルはこの上に重ねて開くので、地の暗さに合わせて
+		     反転パターン（カンプの黒背景）を明示する -->
 		<div class="modal__footer">
 			<p class="modal__copyright">{footerData.copyright}</p>
-			<a class="modal__notice" href={footerData.noticeHref}>{footerData.noticeLabel}</a>
+			<button class="modal__notice" type="button" onclick={() => termsModal.open('dark')}>
+				{footerData.noticeLabel}
+			</button>
 		</div>
 	</div>
 </dialog>

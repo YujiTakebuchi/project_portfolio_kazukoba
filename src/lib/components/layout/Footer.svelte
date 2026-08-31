@@ -2,6 +2,7 @@
 	import Container from '$lib/components/Container.svelte';
 	import footer from '@/lib/data/footer.json';
 	import type { FooterData } from '@/lib/data/types';
+	import { termsModal } from '@/lib/state/terms.svelte';
 
 	/**
 	 * フッター（カンプの footer_pc / footer_sp）
@@ -9,6 +10,10 @@
 	 * 幅はコンテンツ幅。PC は右寄せで 2 つ並べ、SP は両端寄せ。
 	 * PC は英字（Source Sans 3）、SP は日本語フォントというカンプの
 	 * 指定をそのまま反映している。
+	 *
+	 * Copyright / Image Use はページ遷移ではなく利用規約モーダルを開く。
+	 * モーダル本体はルートの +layout.svelte にあるので、ここは
+	 * 共有状態を open するだけ。見た目はカンプ通り下線付きのテキスト。
 	 */
 
 	const data: FooterData = footer;
@@ -17,7 +22,9 @@
 <Container tag="footer">
 	<div class="footer">
 		<p class="footer__copyright">{data.copyright}</p>
-		<a class="footer__notice" href={data.noticeHref}>{data.noticeLabel}</a>
+		<button class="footer__notice" type="button" onclick={() => termsModal.open()}>
+			{data.noticeLabel}
+		</button>
 	</div>
 </Container>
 
