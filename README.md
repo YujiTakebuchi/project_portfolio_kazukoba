@@ -7,6 +7,40 @@ npm run dev      # 開発サーバー
 npm run build    # 静的書き出し（adapter-static）
 npm run preview  # ビルド結果の確認
 npm run check    # 型チェック
+npm run cf:dev   # ビルド + Workers ランタイムで確認（BASIC 認証込み）
+npm run deploy   # ビルド + Cloudflare Workers へデプロイ
+```
+
+---
+
+## デプロイ（Cloudflare Workers + BASIC 認証）
+
+`build/` を Workers の静的アセットとして配信し、その手前で [worker/index.ts](worker/index.ts) が
+BASIC 認証をかける。設定は [wrangler.jsonc](wrangler.jsonc)。
+
+アセットは既定だと Worker より先に返ってしまい認証を素通りするため、
+`assets.run_worker_first: true` で全リクエストを Worker に通してから `env.ASSETS.fetch()` している。
+
+### 認証情報
+
+`BASIC_AUTH_USER` / `BASIC_AUTH_PASS` から読む。**どちらか欠けると全リクエストが 401 になる**（フェイルクローズ）。
+リポジトリに残さないよう `wrangler.jsonc` の `vars` には書かず、secret で渡す。
+
+```bash
+npx wrangler secret put BASIC_AUTH_USER   # portfolio
+npx wrangler secret put BASIC_AUTH_PASS   # パスワード
+```
+
+ローカル（`npm run cf:dev`）は git 管理外の `.dev.vars` を読む。
+雛形は [.dev.vars.example](.dev.vars.example)。
+
+### 初回デプロイ
+
+```bash
+npx wrangler login
+npx wrangler secret put BASIC_AUTH_USER
+npx wrangler secret put BASIC_AUTH_PASS
+npm run deploy
 ```
 
 ---
