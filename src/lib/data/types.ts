@@ -182,3 +182,19 @@ export type AboutPageData = {
 	exhibitions: string[];
 	books: string[];
 };
+
+/**
+ * CONTACT ページ
+ *
+ * カンプ（CONTACT_pc / CONTACT_sp）は入力フォームだが、
+ * このサイトは全ページ静的書き出し（adapter-static）でサーバーを持たないため、
+ * フォームの代わりにメールアドレスへのリンクを置いている。
+ */
+export type ContactPageData = {
+	/** 問い合わせ先。mailto: のリンクと表示テキストの両方に使う */
+	email: string;
+	/** 見出し下のリード文。改行は \n（white-space: pre-line で反映） */
+	lead: string;
+	/** メールアドレスの下に添える注記 */
+	note: string;
+};
