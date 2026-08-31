@@ -31,6 +31,10 @@ npx wrangler secret put BASIC_AUTH_USER   # portfolio
 npx wrangler secret put BASIC_AUTH_PASS   # パスワード
 ```
 
+> **注意**: ダッシュボードから登録する場合は Worker の **Settings → Variables and Secrets**（ランタイム）に入れる。
+> Workers Builds の「Build variables and secrets」はビルドコンテナ内でしか使えず、`env` には届かない。
+> 正しく入っているかは `npx wrangler secret list` で確認できる。
+
 ローカル（`npm run cf:dev`）は git 管理外の `.dev.vars` を読む。
 雛形は [.dev.vars.example](.dev.vars.example)。
 
