@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
+	import Loading from '@/lib/components/ui/Loading.svelte';
 	import TermsModal from '@/lib/components/ui/TermsModal.svelte';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
 	import { themeOf } from '@/lib/config/theme';
+	import { loadingScreen } from '@/lib/state/loading.svelte';
 	import '@/styles/global.scss';
 
 	let { children } = $props();
@@ -34,7 +36,18 @@
 <!-- メインコンテンツとは別レイヤーのサイズ計測用要素。--vw を px で供給する -->
 <ViewportMeasure />
 
-<div class="split" class:theme--dark={isDark}>
+<!--
+	ローディングが明ける（窓が開き始める）までメインコンテンツは opacity: 0。
+	初期値が「隠れている」なので、プリレンダリング済みの HTML でも
+	ハイドレーション前に本編がちらつかない。
+	開くのにかける時間は初訪問かどうかで変わるため、CSS 変数で受け取る。
+-->
+<div
+	class="split"
+	class:theme--dark={isDark}
+	class:split--covered={loadingScreen.isCovered}
+	style:--loading-open-dur="{loadingScreen.openDuration}ms"
+>
 	<div class="side" aria-hidden="true"></div>
 
 	<div class="center">
@@ -52,6 +65,14 @@
 	開閉状態は @/lib/state/terms.svelte で共有している。
 -->
 <TermsModal />
+
+<!--
+	ローディング画面
+
+	最前面（z-index: 1000）で画面全体を覆う。ゲージが満ちたら中央の線から
+	窓が開き、上の .split が浮かび上がってくる。開き切ると自分から畳まれる。
+-->
+<Loading />
 
 <style lang="scss">
 	@use "@/styles/var" as v;
@@ -77,6 +98,18 @@
 
 		@include m.mq("pc") {
 			grid-template-columns: 1fr var(--base-w) 1fr;
+		}
+
+		// ローディングの窓が開くのに合わせて浮かび上がる（Loading.svelte）
+		transition: opacity var(--loading-open-dur, 1200ms) ease-out;
+
+		// --- ローディング画面の裏に隠れている間 ---
+		&--covered {
+			opacity: 0;
+			// 見えていないものに触れたりフォーカスが飛んだりしないように
+			pointer-events: none;
+			// 隠す側はアニメーションさせない（初期状態なので一瞬で 0 にする）
+			transition: none;
 		}
 	}
 

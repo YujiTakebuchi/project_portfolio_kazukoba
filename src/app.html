@@ -12,6 +12,22 @@
 			rel="stylesheet"
 		/>
 		%sveltekit.head%
+		<noscript>
+			<!--
+				ローディング画面は JS で明ける（src/lib/components/ui/Loading.svelte）。
+				JS が動かない環境ではいつまでも覆われたままになるので、
+				演出ごと畳んで本編をそのまま見せる。
+			-->
+			<style>
+				[data-loading] {
+					display: none !important;
+				}
+				.split {
+					opacity: 1 !important;
+					pointer-events: auto !important;
+				}
+			</style>
+		</noscript>
 	</head>
 	<body data-sveltekit-preload-data="hover">
 		<div style="display: contents">%sveltekit.body%</div>
