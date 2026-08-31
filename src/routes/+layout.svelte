@@ -71,9 +71,23 @@
 	}
 
 	.center {
+		// 縦は「ヘッダー → 本文 → フッター」の一列。
+		// フッターだけ margin-top: auto で下端に落とす（下記）。
+		display: flex;
+		flex-direction: column;
 		width: 100%;
 		// グリッドアイテムの既定 min-width: auto で押し広げられないようにする
 		min-width: 0;
+
+		// コンテンツが画面より短いときだけフッターを画面下端に貼り付ける。
+		// 余った高さを margin が吸うだけなので、コンテンツが画面より長ければ
+		// そのまま本文の後ろに流れる（position: fixed と違って重ならない）。
+		//
+		// フッターは各ページが <Footer /> として並べるため、
+		// レイアウト側からは :global で拾う。
+		> :global(footer) {
+			margin-top: auto;
+		}
 	}
 
 	.side {
