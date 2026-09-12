@@ -14,8 +14,8 @@ export const NAV_ITEMS: NavItem[] = [
 	{ label: 'TOP', href: '/' },
 	{ label: 'ABOUT', href: '/about' },
 	{ label: 'WORKS', href: '/works' },
-	{ label: 'EXHIBITION', href: '/exhibition' },
 	{ label: 'NEWS', href: '/news' },
+	{ label: 'EXHIBITION', href: '/exhibition' },
 	{ label: 'CONTACT', href: '/contact' },
 	{ label: 'SHOP', href: '/shop', icon: '/img/icon/shop.svg' }
 ];

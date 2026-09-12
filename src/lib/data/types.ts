@@ -68,6 +68,11 @@ export type WorksData = {
 export type Work = Photo & {
 	/** 作品名 */
 	title: string;
+	/**
+	 * 属するカテゴリの id（WorkCategory.id）。
+	 * 1 点が複数のカテゴリに入る（STREET かつ AWARD WORKS など）。
+	 */
+	categories: string[];
 	/** 出展した展示 */
 	exhibition?: string;
 	/** 機材（ボディ / レンズ） */
@@ -80,9 +85,26 @@ export type Work = Photo & {
 	size?: string;
 };
 
-/** WORKS ページ（一覧グリッド＋拡大表示） */
+/**
+ * WORKS の絞り込みカテゴリ
+ *
+ * 全件表示（ALL）はカテゴリではなく一覧側の UI なので、ここには含めず
+ * WorksPageData.allLabel で持つ。
+ */
+export type WorkCategory = {
+	/** Work.categories から参照する識別子 */
+	id: string;
+	/** ボタンに出すラベル */
+	label: string;
+};
+
+/** WORKS ページ（カテゴリ絞り込み＋一覧グリッド＋拡大表示） */
 export type WorksPageData = {
-	/** 並び順がそのまま一覧・拡大表示の送り順になる */
+	/** 全件表示ボタンのラベル */
+	allLabel: string;
+	/** 並び順がそのまま絞り込みボタンの並び順になる */
+	categories: WorkCategory[];
+	/** 並び順がそのまま一覧（左上から右へ）・拡大表示の送り順になる */
 	items: Work[];
 };
 
