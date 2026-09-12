@@ -335,17 +335,32 @@ export type AboutPageData = AboutProfileData & {
 };
 
 /**
- * CONTACT ページ
+ * CONTACT ページ（カンプの CONTACT_pc / CONTACT_sp）
  *
- * カンプ（CONTACT_pc / CONTACT_sp）は入力フォームだが、
- * このサイトは全ページ静的書き出し（adapter-static）でサーバーを持たないため、
- * フォームの代わりにメールアドレスへのリンクを置いている。
+ * 項目のラベルはフォームの骨格そのものなのでコンポーネント側に置き、
+ * 差し替わる文言（カテゴリーの選択肢 / 入力例 / 送信結果の文）だけをここで持つ。
  */
 export type ContactPageData = {
-	/** 問い合わせ先。mailto: のリンクと表示テキストの両方に使う */
-	email: string;
-	/** 見出し下のリード文。改行は \n（white-space: pre-line で反映） */
-	lead: string;
-	/** メールアドレスの下に添える注記 */
-	note: string;
+	/** カテゴリーのプルダウンの選択肢。並び順そのままで出す */
+	categories: string[];
+	/** 各入力欄の入力例（placeholder）。category は未選択のときに出す文 */
+	placeholders: {
+		name: string;
+		email: string;
+		category: string;
+		message: string;
+	};
+	/** 送信ボタンの下に出す文 */
+	messages: {
+		/** 未記入・形式不正があるとき */
+		invalid: string;
+		/** 送信中 */
+		sending: string;
+		/** 送信できたとき */
+		success: string;
+		/** 送信に失敗したとき */
+		failed: string;
+		/** EmailJS の環境変数が未設定のとき */
+		unconfigured: string;
+	};
 };

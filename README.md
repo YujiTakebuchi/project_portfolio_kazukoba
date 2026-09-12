@@ -105,6 +105,49 @@ npm run deploy
 
 ---
 
+## CONTACT フォーム（EmailJS）
+
+全ページ静的書き出しでサーバーを持たないため、送信はブラウザから
+[EmailJS](https://www.emailjs.com/) を直接叩く。送信処理は
+[src/lib/utils/contactMail.ts](src/lib/utils/contactMail.ts)。
+
+### 設定
+
+`.env.example` をコピーして `.env` を作り、EmailJS の管理画面の値を入れる。
+`.env` は git 管理外。
+
+```bash
+cp .env.example .env
+```
+
+| 変数                         | 取得場所                       |
+| ---------------------------- | ------------------------------ |
+| `PUBLIC_EMAILJS_SERVICE_ID`  | Email Services の Service ID   |
+| `PUBLIC_EMAILJS_TEMPLATE_ID` | Email Templates の Template ID |
+| `PUBLIC_EMAILJS_PUBLIC_KEY`  | Account > General の Public Key |
+
+3 つともブラウザに渡る値なので `PUBLIC_` を付ける（ビルド後の JS に埋め込まれる）。
+EmailJS の **Private Key はサーバー専用でブラウザからは使えない**ため、ここでは使わない。
+悪用は EmailJS 側の **Account > Security** で抑える。
+
+- **Allowed origins**: 公開先のドメインだけを許可する
+- reCAPTCHA / レート制限を必要に応じて有効にする
+
+未設定のままでも `npm run build` は通る。その場合フォームは送信せず、
+「送信の設定が未完了のため…」と表示する。
+
+### テンプレート変数
+
+テンプレート側で使える変数は 4 つ。Reply To には `{{email}}` を入れておくと返信しやすい。
+
+```
+{{name}} {{email}} {{category}} {{message}}
+```
+
+文言・カテゴリーの選択肢は [src/lib/data/contact.json](src/lib/data/contact.json)。
+
+---
+
 ## レイアウト
 
 3つの幅の概念で構成する。
