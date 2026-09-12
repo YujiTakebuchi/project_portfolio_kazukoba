@@ -26,6 +26,18 @@
 	let { data }: PageProps = $props();
 
 	const about = $derived(data.about);
+
+	/**
+	 * 自己紹介（日本語 / 英語）の改行
+	 *
+	 * 改行そのものは CSS の white-space: pre-line が出す。JSON に書いた
+	 * "\n" は読み込んだ時点で改行になっているが、CMS の入力欄のように
+	 * 文字どおりの \n が入る経路もあるので、どちらも改行として扱う。
+	 */
+	const toLineBreaks = (text: string) => text.split('\\n').join('\n');
+
+	const ja = $derived(toLineBreaks(about.ja));
+	const en = $derived(toLineBreaks(about.en));
 </script>
 
 <svelte:head>
@@ -62,8 +74,8 @@
 			<div class="about__body">
 				<h2 class="about__name">{about.name}</h2>
 
-				<p class="about__ja">{about.ja}</p>
-				<p class="about__en">{about.en}</p>
+				<p class="about__ja">{ja}</p>
+				<p class="about__en">{en}</p>
 
 				<ul class="sns">
 					{#each about.sns as item (item.label)}
@@ -212,7 +224,7 @@
 			}
 		}
 
-		// 段落の区切りは JSON 側の空行（\n\n）で表す
+		// 改行は JSON 側の \n、段落の区切りは空行（\n\n）で表す
 		&__ja {
 			margin-top: f.vw(25);
 			white-space: pre-line;

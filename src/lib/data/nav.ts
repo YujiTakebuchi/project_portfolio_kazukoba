@@ -17,5 +17,5 @@ export const NAV_ITEMS: NavItem[] = [
 	{ label: 'NEWS', href: '/news' },
 	{ label: 'EXHIBITION', href: '/exhibition' },
 	{ label: 'CONTACT', href: '/contact' },
-	{ label: 'SHOP', href: '/shop', icon: '/img/icon/shop.svg' }
+	{ label: 'SHOP', href: '/shop', icon: '/img/icon/shop.svg', blank: true }
 ];

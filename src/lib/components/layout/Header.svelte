@@ -83,6 +83,8 @@
 								class="header__link"
 								class:header__link--current={isCurrent(item.href)}
 								href={item.href}
+								target={item.blank ? '_blank' : undefined}
+								rel={item.blank ? 'noopener' : undefined}
 								aria-current={isCurrent(item.href) ? 'page' : undefined}
 							>
 								<span>{item.label}</span>
@@ -136,6 +138,8 @@
 							class="drawer__link"
 							class:drawer__link--current={isCurrent(item.href)}
 							href={item.href}
+							target={item.blank ? '_blank' : undefined}
+							rel={item.blank ? 'noopener' : undefined}
 							aria-current={isCurrent(item.href) ? 'page' : undefined}
 							onclick={close}
 						>

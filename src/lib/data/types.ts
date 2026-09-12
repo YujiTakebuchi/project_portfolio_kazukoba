@@ -28,6 +28,8 @@ export type NavItem = {
 	href: string;
 	/** 末尾に添えるアイコン（SHOP など）。public 配下のパス */
 	icon?: string;
+	/** 別タブで開く（外部の SHOP サイトなど） */
+	blank?: boolean;
 };
 
 /** KV スライダー */
