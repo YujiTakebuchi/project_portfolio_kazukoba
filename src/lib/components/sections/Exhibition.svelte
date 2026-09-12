@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
+	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
 	import exhibition from '@/lib/data/exhibition.json';
 	import type { ExhibitionData } from '@/lib/data/types';
 
@@ -19,6 +20,8 @@
 
 <Container tag="section">
 	<div class="exhibition" id="exhibition">
+		<SectionTitle text="EXHIBITION" />
+
 		<div class="exhibition__panel">
 			<img
 				class="exhibition__img"
@@ -29,7 +32,7 @@
 			/>
 
 			<div class="exhibition__text">
-				<h2 class="exhibition__title">{data.title}</h2>
+				<h3 class="exhibition__title">{data.title}</h3>
 				<p class="exhibition__subtitle">{data.subtitle}</p>
 
 				<dl class="exhibition__info">
@@ -46,7 +49,7 @@
 		</div>
 
 		<div class="exhibition__btn">
-			<ArrowLink href={data.link} label="EXHIBITION" />
+			<ArrowLink href={data.link} label="MORE" ariaLabel="EXHIBITION をもっと見る" />
 		</div>
 	</div>
 </Container>
@@ -64,12 +67,14 @@
 		}
 
 		&__panel {
+			margin-top: f.vw(20);
 			background-color: v.$c-panel;
 			// カンプ: SP は上 30 / 左右 14 / 下 20
 			padding: f.vw(30) f.vw(14) f.vw(20);
 
 			@include m.mq("pc") {
 				// カンプ: PC は上下 30 / 左 46、画像とテキストの間 50
+				margin-top: f.vwPc(20);
 				display: flex;
 				align-items: flex-start;
 				gap: f.vwPc(50);

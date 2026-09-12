@@ -8,6 +8,11 @@
 /** 画像 1 枚 */
 export type Photo = {
 	src: string;
+	/**
+	 * PC レイアウトで差し替える画像（KV のように PC / SP でカットが違うもの）。
+	 * 無ければ src を両方で使う。
+	 */
+	srcPc?: string;
 	/** 装飾目的の画像は空文字にする */
 	alt: string;
 	/** 元画像のピクセルサイズ。読み込み前の場所取り（CLS 対策）に使う */
@@ -28,11 +33,23 @@ export type KvData = {
 	images: Photo[];
 };
 
+/**
+ * ABOUT の名前ブロック（日本語 / 英語で 1 組ずつ）
+ *
+ * roles は所属・肩書きを 1 件ずつ持つ。SP は 1 行ずつ改行し、
+ * PC は区切り文字でつないで 1 行に流す（区切りは CSS 側で付ける）。
+ */
+export type AboutProfile = {
+	/** 名前の上に出す肩書き（"写真家・アーティスト"） */
+	role: string;
+	name: string;
+	roles: string[];
+};
+
 /** ステートメント（ABOUT） */
 export type AboutData = {
-	/** 改行は \n で表現する（CSS の white-space: pre-line で反映） */
-	ja: string;
-	en: string;
+	ja: AboutProfile;
+	en: AboutProfile;
 	link: string;
 };
 
@@ -119,6 +136,8 @@ export type ExhibitionPageData = {
 export type NewsItem = {
 	date: string;
 	title: string;
+	/** 新着ラベル（NEW）を出すかどうか。CMS 側で立てる想定 */
+	isNew?: boolean;
 	/** 詳細ページ。無い場合はリンクにせずテキストのまま出す */
 	link?: string;
 };

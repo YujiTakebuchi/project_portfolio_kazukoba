@@ -1,41 +1,43 @@
 <script lang="ts">
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
-	import LoopSlider from '$lib/components/ui/LoopSlider.svelte';
+	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
 	import works from '@/lib/data/works.json';
 	import type { WorksData } from '@/lib/data/types';
 
 	/**
 	 * WORKS（カンプの WORKS）
 	 *
-	 * 画像エリアは画面幅、ボタンだけコンテンツ幅に合わせて右寄せ。
-	 * PC は 1 段、SP は 2 段（カンプの " slide show1" / " slide show2"）。
-	 * 2 段目は並び順をずらし、逆方向に流している。
+	 * 幅はコンテンツ幅。画像は 5 枚を 1 枚の大きなカットを軸に組む。
+	 *   PC : 小 2 枚 / 大 1 枚 / 小 2 枚 の 3 カラム
+	 *   SP : 小 2 枚 → 大 1 枚（横いっぱい）→ 小 2 枚 の 3 段
+	 * どのカットも 3:2 で、並び順は JSON の順番がそのまま反映される。
 	 */
 
 	const data: WorksData = works;
-
-	// 2 段目は先頭 2 枚を後ろに回して見え方をずらす
-	const secondRow = [...data.images.slice(2), ...data.images.slice(0, 2)];
 </script>
 
-<section class="works" id="works">
-	<div class="works__slider">
-		<div class="works__row">
-			<LoopSlider images={data.images} direction="left" duration={60} />
+<Container tag="section">
+	<div class="works" id="works">
+		<SectionTitle text="WORKS" />
+
+		<div class="works__grid">
+			{#each data.images as image (image.src)}
+				<img
+					class="works__img"
+					src={image.src}
+					alt={image.alt}
+					loading="lazy"
+					decoding="async"
+				/>
+			{/each}
 		</div>
 
-		<div class="works__row works__row--sp">
-			<LoopSlider images={secondRow} direction="right" duration={60} />
+		<div class="works__btn">
+			<ArrowLink href={data.link} label="VIEW ALL WORKS" size="wide" />
 		</div>
 	</div>
-
-	<Container>
-		<div class="works__btn">
-			<ArrowLink href={data.link} label="WORKS" />
-		</div>
-	</Container>
-</section>
+</Container>
 
 <style lang="scss">
 	@use "@/styles/var" as v;
@@ -49,29 +51,51 @@
 			margin-top: f.vwPc(80);
 		}
 
-		// コンテンツ幅・ベース幅の外へはみ出して画面幅いっぱいに広げる
-		&__slider {
-			@include m.fullBleed;
-
-			// LoopSlider へ渡すサイズ（幅は画像の縦横比なり）
-			--slider-item-h: #{f.vw(155)};
-			--slider-gap: #{f.vw(3)};
+		&__grid {
+			display: grid;
+			// SP: 小 2 枚ずつの 2 カラム。大きい 1 枚だけ横いっぱいに広げる
+			grid-template-columns: repeat(2, 1fr);
+			gap: f.vw(3);
+			margin-top: f.vw(20);
 
 			@include m.mq("pc") {
-				--slider-item-h: #{f.vwPc(300)};
-				--slider-gap: #{f.vwPc(5)};
+				// カンプ: 292.58 : 589.13 : 292.58（間 2）
+				grid-template-columns: 292.58fr 589.13fr 292.58fr;
+				column-gap: f.vwPc(2);
+				row-gap: f.vwPc(2.5);
+				margin-top: f.vwPc(20);
 			}
 		}
 
-		&__row {
-			& + & {
-				margin-top: f.vw(3);
+		&__img {
+			width: 100%;
+			aspect-ratio: 3 / 2;
+			object-fit: cover;
+
+			// 3 枚目だけが大きいカット
+			&:nth-child(3) {
+				grid-column: span 2;
 			}
 
-			// 2 段目は SP のみ
-			&--sp {
-				@include m.mq("pc") {
-					display: none;
+			@include m.mq("pc") {
+				// 左列 → 中央（2 段ぶち抜き）→ 右列
+				&:nth-child(1) {
+					grid-area: 1 / 1;
+				}
+				&:nth-child(2) {
+					grid-area: 2 / 1;
+				}
+				&:nth-child(3) {
+					grid-area: 1 / 2 / span 2 / auto;
+					// 高さは左右の列（3:2 の小 2 枚 + 行間）なり
+					height: 100%;
+					aspect-ratio: auto;
+				}
+				&:nth-child(4) {
+					grid-area: 1 / 3;
+				}
+				&:nth-child(5) {
+					grid-area: 2 / 3;
 				}
 			}
 		}

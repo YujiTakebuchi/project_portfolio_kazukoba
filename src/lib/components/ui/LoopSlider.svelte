@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { MQ_PC } from '@/lib/config/layout';
 	import type { Photo } from '@/lib/data/types';
 
 	/**
@@ -13,6 +14,9 @@
 	 *   --slider-item-h : 画像の高さ（必須）
 	 *   --slider-item-w : 画像の幅（省略時は縦横比なり）
 	 *   --slider-gap    : 画像同士の間隔
+	 *
+	 * PC / SP でカットが違う画像（KV）は Photo.srcPc を持たせると
+	 * <picture> で出し分ける。表示しない方はダウンロードされない。
 	 */
 
 	type Props = {
@@ -33,7 +37,12 @@
 			{#each images as image, i (`${isClone}-${i}`)}
 				<div class="slider__item" aria-hidden={isClone ? 'true' : undefined}>
 					<!-- 複製分まで幅が確定しないとループ位置がずれるため lazy にしない -->
-					<img src={image.src} alt={isClone ? '' : image.alt} decoding="async" />
+					<picture>
+						{#if image.srcPc}
+							<source media={MQ_PC} srcset={image.srcPc} />
+						{/if}
+						<img src={image.src} alt={isClone ? '' : image.alt} decoding="async" />
+					</picture>
 				</div>
 			{/each}
 		{/each}
@@ -63,6 +72,11 @@
 	.slider__item {
 		flex: none;
 		margin-right: var(--slider-gap, 0px);
+
+		// picture は箱を作らず、サイズ指定は中の img だけに効かせる
+		picture {
+			display: contents;
+		}
 
 		img {
 			// リセットの max-width: 100% / height: auto を打ち消して

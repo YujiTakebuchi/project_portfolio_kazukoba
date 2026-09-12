@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
+	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
 	import news from '@/lib/data/news.json';
-	import type { NewsData } from '@/lib/data/types';
+	import type { NewsData, NewsItem } from '@/lib/data/types';
 	import { toDatetime } from '@/lib/utils/date';
 
 	/**
@@ -10,32 +11,43 @@
 	 *
 	 * 幅はコンテンツ幅。ニュースリストは CMS 管理を想定して JSON から。
 	 * カンプの罫線は各行の border-top ＋ リスト末尾の border-bottom で
-	 * 表現している（上下 23 の余白込み）。
+	 * 表現している（上下の余白込み）。
+	 * 新着ラベル（NEW）は item.isNew が立っている行だけに出す。
 	 */
 
 	const data: NewsData = news;
 </script>
 
+{#snippet body(item: NewsItem)}
+	<div class="news__head">
+		<time class="news__date" datetime={toDatetime(item.date)}>{item.date}</time>
+		{#if item.isNew}
+			<span class="news__tag">NEW</span>
+		{/if}
+	</div>
+	<p class="news__title">{item.title}</p>
+{/snippet}
+
 <Container tag="section">
 	<div class="news" id="news">
+		<SectionTitle text="NEWS" />
+
 		<ul class="news__list">
 			{#each data.items as item (item.date + item.title)}
 				<li class="news__item">
 					{#if item.link}
 						<a class="news__link" href={item.link}>
-							<time class="news__date" datetime={toDatetime(item.date)}>{item.date}</time>
-							<p class="news__title">{item.title}</p>
+							{@render body(item)}
 						</a>
 					{:else}
-						<time class="news__date" datetime={toDatetime(item.date)}>{item.date}</time>
-						<p class="news__title">{item.title}</p>
+						{@render body(item)}
 					{/if}
 				</li>
 			{/each}
 		</ul>
 
 		<div class="news__btn">
-			<ArrowLink href={data.link} label="NEWS" />
+			<ArrowLink href={data.link} label="MORE" ariaLabel="NEWS をもっと見る" />
 		</div>
 	</div>
 </Container>
@@ -53,9 +65,11 @@
 		}
 
 		&__list {
+			margin-top: f.vw(20);
 			border-bottom: f.vw(1) solid v.$c-line;
 
 			@include m.mq("pc") {
+				margin-top: f.vwPc(20);
 				border-bottom-width: f.vwPc(1);
 			}
 		}
@@ -65,7 +79,7 @@
 			border-top: f.vw(1) solid v.$c-line;
 
 			@include m.mq("pc") {
-				padding: f.vwPc(23) 0;
+				padding: f.vwPc(20) 0;
 				border-top-width: f.vwPc(1);
 			}
 		}
@@ -75,12 +89,40 @@
 			@include m.linkHover;
 		}
 
+		&__head {
+			display: flex;
+			align-items: center;
+			gap: f.vw(10);
+
+			@include m.mq("pc") {
+				gap: f.vwPc(10);
+			}
+		}
+
 		&__date {
-			display: block;
 			@include m.font(f.vw(12), 1.6, 0.07, 400, "en");
 
 			@include m.mq("pc") {
 				@include m.font(f.vwPc(12), 1.6, 0.05, 400, "en");
+			}
+		}
+
+		// カンプ: 50x15 の塗り。文字は天地中央
+		&__tag {
+			display: inline-flex;
+			justify-content: center;
+			align-items: center;
+			flex: none;
+			width: f.vw(50);
+			height: f.vw(15);
+			background-color: v.$c-accent;
+			color: v.$c-bg;
+			@include m.font(f.vw(10), 1, 0.07, 400, "mont");
+
+			@include m.mq("pc") {
+				width: f.vwPc(50);
+				height: f.vwPc(15);
+				@include m.font(f.vwPc(10), 1, 0.07, 400, "mont");
 			}
 		}
 

@@ -23,8 +23,8 @@
 	<Kv />
 	<About />
 	<Works />
-	<Exhibition />
 	<News />
+	<Exhibition />
 </main>
 
 <Footer />

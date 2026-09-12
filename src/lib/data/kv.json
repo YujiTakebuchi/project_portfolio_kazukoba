@@ -1,12 +1,9 @@
 {
 	"images": [
-		{ "src": "/img/photo/photo-01.png", "alt": "" },
-		{ "src": "/img/photo/photo-02.png", "alt": "" },
-		{ "src": "/img/photo/photo-03.png", "alt": "" },
-		{ "src": "/img/photo/photo-04.png", "alt": "" },
-		{ "src": "/img/photo/photo-05.png", "alt": "" },
-		{ "src": "/img/photo/photo-06.png", "alt": "" },
-		{ "src": "/img/photo/photo-07.png", "alt": "" },
-		{ "src": "/img/photo/photo-08.png", "alt": "" }
+		{ "src": "/img/kv/kv-sp-01.jpg", "srcPc": "/img/kv/kv-pc-01.jpg", "alt": "" },
+		{ "src": "/img/kv/kv-sp-02.jpg", "srcPc": "/img/kv/kv-pc-02.jpg", "alt": "" },
+		{ "src": "/img/kv/kv-sp-03.jpg", "srcPc": "/img/kv/kv-pc-03.jpg", "alt": "" },
+		{ "src": "/img/kv/kv-sp-04.jpg", "srcPc": "/img/kv/kv-pc-04.jpg", "alt": "" },
+		{ "src": "/img/kv/kv-sp-05.jpg", "srcPc": "/img/kv/kv-pc-05.jpg", "alt": "" }
 	]
 }
