@@ -106,7 +106,7 @@
 				<!-- 個展 -->
 				<section class="section">
 					<h2 class="section__heading">
-						個展<span class="section__label">Personal Exhibition</span>
+						個展<span class="section__label">Solo Exhibition</span>
 					</h2>
 
 					<ul class="list list--en">
