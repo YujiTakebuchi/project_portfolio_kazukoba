@@ -3,8 +3,7 @@
 	import Header from '$lib/components/layout/Header.svelte';
 	import { MQ_PC } from '@/lib/config/layout';
 	import { SITE_TITLE } from '@/lib/data/nav';
-	import aboutPage from '@/lib/data/aboutPage.json';
-	import type { AboutPageData } from '@/lib/data/types';
+	import type { PageProps } from './$types';
 
 	/**
 	 * ABOUT ページ（カンプの ABOUT_pc / ABOUT_sp）
@@ -20,10 +19,13 @@
 	 * SP は写真を先頭に置いた1カラム。
 	 *
 	 * 受賞履歴 / 個展 / 書籍は同じ「区切り線 + 見出し + 一覧」の作りなので、
-	 * .section をまとめて当てている。
+	 * .section をまとめて当てている。この 3 つは microCMS の about API から、
+	 * 残りは JSON から。束ねているのは +page.server.ts。
 	 */
 
-	const data: AboutPageData = aboutPage as AboutPageData;
+	let { data }: PageProps = $props();
+
+	const about = $derived(data.about);
 </script>
 
 <svelte:head>
@@ -44,27 +46,27 @@
 			<picture class="about__photo">
 				<source
 					media={MQ_PC}
-					srcset={data.visual.pc.src}
-					width={data.visual.pc.width}
-					height={data.visual.pc.height}
+					srcset={about.visual.pc.src}
+					width={about.visual.pc.width}
+					height={about.visual.pc.height}
 				/>
 				<img
-					src={data.visual.sp.src}
-					alt={data.visual.alt}
-					width={data.visual.sp.width}
-					height={data.visual.sp.height}
+					src={about.visual.sp.src}
+					alt={about.visual.alt}
+					width={about.visual.sp.width}
+					height={about.visual.sp.height}
 					decoding="async"
 				/>
 			</picture>
 
 			<div class="about__body">
-				<h2 class="about__name">{data.name}</h2>
+				<h2 class="about__name">{about.name}</h2>
 
-				<p class="about__ja">{data.ja}</p>
-				<p class="about__en">{data.en}</p>
+				<p class="about__ja">{about.ja}</p>
+				<p class="about__en">{about.en}</p>
 
 				<ul class="sns">
-					{#each data.sns as item (item.label)}
+					{#each about.sns as item (item.label)}
 						<li>
 							<a class="sns__link" href={item.href} target="_blank" rel="noopener">
 								<img
@@ -89,7 +91,7 @@
 					</h2>
 
 					<dl class="awards">
-						{#each data.awards as row (row.year)}
+						{#each about.awards as row (row.year)}
 							<div class="awards__row">
 								<dt class="awards__year">{row.year}</dt>
 								<dd class="awards__body">
@@ -108,7 +110,7 @@
 					</h2>
 
 					<ul class="list list--en">
-						{#each data.exhibitions as item (item)}
+						{#each about.exhibitions as item (item)}
 							<li class="list__item">{item}</li>
 						{/each}
 					</ul>
@@ -121,7 +123,7 @@
 					</h2>
 
 					<ul class="list">
-						{#each data.books as item (item)}
+						{#each about.books as item (item)}
 							<li class="list__item">{item}</li>
 						{/each}
 					</ul>

@@ -2,7 +2,6 @@
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
 	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
-	import works from '@/lib/data/works.json';
 	import type { WorksData } from '@/lib/data/types';
 
 	/**
@@ -11,10 +10,16 @@
 	 * 幅はコンテンツ幅。画像は 5 枚を 1 枚の大きなカットを軸に組む。
 	 *   PC : 小 2 枚 / 大 1 枚 / 小 2 枚 の 3 カラム
 	 *   SP : 小 2 枚 → 大 1 枚（横いっぱい）→ 小 2 枚 の 3 段
-	 * どのカットも 3:2 で、並び順は JSON の順番がそのまま反映される。
+	 * どのカットも 3:2 で、並び順は CMS の順番がそのまま反映される。
+	 *
+	 * 画像は microCMS の top API（works の参照）から。
 	 */
 
-	const data: WorksData = works;
+	type Props = {
+		data: WorksData;
+	};
+
+	let { data }: Props = $props();
 </script>
 
 <Container tag="section">

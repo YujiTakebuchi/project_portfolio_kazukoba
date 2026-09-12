@@ -22,28 +22,5 @@
 			"handle": "@kazusekaowa"
 		},
 		{ "type": "youtube", "label": "YouTube", "href": "#" }
-	],
-	"awards": [
-		{
-			"year": "1994年",
-			"contents": "<p>第19回秋耕展　秋耕会賞</p>"
-		},
-		{
-			"year": "2006年",
-			"contents": "<p>東京都美術館80周年記念秋耕展 東京都知事賞</p>"
-		},
-		{
-			"year": "2009年",
-			"contents": "<p>第34回秋耕展　文部科学大臣賞<span class=\"en\">Commendation from the Minister of Education, Culture, Sports, Science and Technology</span></p><p>第82回日本写真会展　日本写真会会長賞</p><p>足立区展大賞</p>"
-		},
-		{
-			"year": "2019年",
-			"contents": "<p>第43回秋耕展　国土交通大臣賞<span class=\"note\">他</span></p>"
-		}
-	],
-	"exhibitions": ["“Duality\"  2019.2.27(Wed)- 3.10 (Sun)"],
-	"books": [
-		"写真がもっと楽しくなる　デジタル一眼レフ　フィルター撮影の教科書（インプレスジャパン）",
-		"CAPA特別編集　ソニーα NEX-7スーパーブック（学研パブリッシング）"
 	]
 }

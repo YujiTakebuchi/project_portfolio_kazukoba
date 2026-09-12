@@ -2,20 +2,23 @@
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
 	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
-	import news from '@/lib/data/news.json';
 	import type { NewsData, NewsItem } from '@/lib/data/types';
 	import { toDatetime } from '@/lib/utils/date';
 
 	/**
 	 * NEWS（カンプの NEWS）
 	 *
-	 * 幅はコンテンツ幅。ニュースリストは CMS 管理を想定して JSON から。
+	 * 幅はコンテンツ幅。出す記事は microCMS の top API（news の参照）で選ぶ。
 	 * カンプの罫線は各行の border-top ＋ リスト末尾の border-bottom で
 	 * 表現している（上下の余白込み）。
 	 * 新着ラベル（NEW）は item.isNew が立っている行だけに出す。
 	 */
 
-	const data: NewsData = news;
+	type Props = {
+		data: NewsData;
+	};
+
+	let { data }: Props = $props();
 </script>
 
 {#snippet body(item: NewsItem)}

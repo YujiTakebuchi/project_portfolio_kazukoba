@@ -3,32 +3,86 @@
 		{
 			"id": "sandaishashin-2026",
 			"label": "三代写心（2026）",
-			"image": {
-				"src": "/img/photo/photo-08.png",
-				"alt": "「三代写心」展示会ポスター",
-				"width": 712,
-				"height": 1006
-			},
+			"images": [
+				{
+					"src": "/img/exhibition/sandaishashin-01.png",
+					"alt": "「三代写心」展示会ポスター（表）",
+					"width": 616,
+					"height": 874
+				},
+				{
+					"src": "/img/exhibition/sandaishashin-02.png",
+					"alt": "「三代写心」展示会ポスター（裏）",
+					"width": 633,
+					"height": 879
+				}
+			],
 			"title": "三代写心",
 			"subtitle": "ーカメラ三陽堂に宿った三人の写真家ー",
 			"date": "2026.10.14 - 19",
-			"period": "テキストテキストテキストテキストテキストテキスト",
-			"venue": "テキストテキストテキストテキストテキストテキスト"
+			"movies": [],
+			"sections": [
+				{
+					"heading": "会期",
+					"lines": [
+						{ "text": "2026年10月14日(水)〜10月19日(月)\n平日 11:00〜19:00 土日祝 10:30〜18:30" },
+						{ "note": "※初日のみ15:00開始、最終日のみ16:00終了" }
+					]
+				},
+				{
+					"heading": "会場",
+					"lines": [
+						{
+							"text": "Gallery 蔵\n御茶ノ水ソラシティ B1F　〒101-0062 東京都千代田区神田駿河台4-6"
+						}
+					]
+				},
+				{
+					"heading": "ギャラリートークショー",
+					"lines": [
+						{
+							"text": "会場：お茶ナビゲート\n10月17日(土) 14:00〜15:00\nスペシャルゲスト：菅原 隆治 (CAPA編集長)"
+						}
+					]
+				}
+			]
 		},
 		{
 			"id": "duality-2019",
 			"label": "Duality（2019）",
-			"image": {
-				"src": "/img/photo/photo-07.png",
-				"alt": "「Duality」展示会ポスター",
-				"width": 400,
-				"height": 600
-			},
+			"images": [
+				{
+					"src": "/img/exhibition/duality-01.png",
+					"alt": "「Duality」展示会ポスター",
+					"width": 599,
+					"height": 856
+				}
+			],
 			"title": "Duality",
-			"subtitle": "ー光と影のあいだにあるものー",
-			"date": "2019.5.10 - 19",
-			"period": "テキストテキストテキストテキストテキストテキスト",
-			"venue": "テキストテキストテキストテキストテキストテキスト"
+			"titleLang": "en",
+			"date": "2019.2.27 - 3.10",
+			"movies": [],
+			"sections": [
+				{
+					"heading": "会期",
+					"lines": [
+						{ "text": "2019年2月27日(水) - 3月10日(日)", "note": "※3月4日(月)休み" },
+						{ "text": "16:30 - 23:00（日曜15:00 - 21:30）" }
+					]
+				},
+				{
+					"heading": "会場",
+					"lines": [{ "text": "Photo Bar [sa-yo: ]" }]
+				},
+				{
+					"heading": "ギャラリートークショー",
+					"lines": [
+						{
+							"text": "2019年3月1日(金) 19:00 - 20:00　— another sky —\nスペシャルゲスト：桃井一至（写真家）"
+						}
+					]
+				}
+			]
 		}
 	]
 }

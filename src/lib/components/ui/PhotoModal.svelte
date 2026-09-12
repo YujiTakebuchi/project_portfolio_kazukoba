@@ -130,6 +130,10 @@
 							<p class="modal__exhibition">{current.exhibition}</p>
 						{/if}
 
+						{#if current.award}
+							<p class="modal__award">{current.award}</p>
+						{/if}
+
 						<dl class="modal__meta">
 							{#if current.gear}
 								<div class="modal__metaRow">
@@ -405,7 +409,9 @@
 			}
 		}
 
-		&__exhibition {
+		// 出展した展示・作品の説明と受賞歴。どちらも同じ組みで縦に並べる
+		&__exhibition,
+		&__award {
 			margin-top: f.vw(10);
 			@include m.font(f.vw(14), 1.7, 0.05);
 

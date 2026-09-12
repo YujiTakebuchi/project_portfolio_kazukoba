@@ -1,8 +1,11 @@
 {
 	"link": "/exhibition",
-	"image": { "src": "/img/photo/photo-08.png", "alt": "三代写心 展示イメージ" },
+	"image": {
+		"src": "/img/exhibition/sandaishashin-01.png",
+		"alt": "三代写心 展示イメージ"
+	},
 	"title": "三代写心",
 	"subtitle": "ーカメラ三陽堂に宿った三人の写真家ー",
-	"period": "2026.10.14 - 19　00:00-00:00（19日のみ00:00）",
-	"venue": "テキストテキストテキストテキスト"
+	"period": "2026.10.14 - 19　平日 11:00-19:00 / 土日祝 10:30-18:30（初日は15:00開始、最終日は16:00終了）",
+	"venue": "Gallery 蔵（御茶ノ水ソラシティ B1F）"
 }

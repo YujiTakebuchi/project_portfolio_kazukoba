@@ -7,6 +7,9 @@
 	import News from '$lib/components/sections/News.svelte';
 	import Works from '$lib/components/sections/Works.svelte';
 	import { SITE_TITLE } from '@/lib/data/nav';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
 </script>
 
 <svelte:head>
@@ -20,10 +23,10 @@
 <Header />
 
 <main>
-	<Kv />
+	<Kv data={data.kv} />
 	<About />
-	<Works />
-	<News />
+	<Works data={data.works} />
+	<News data={data.news} />
 	<Exhibition />
 </main>
 

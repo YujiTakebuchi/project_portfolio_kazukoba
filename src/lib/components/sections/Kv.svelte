@@ -1,6 +1,5 @@
 <script lang="ts">
 	import LoopSlider from '$lib/components/ui/LoopSlider.svelte';
-	import kv from '@/lib/data/kv.json';
 	import type { KvData } from '@/lib/data/types';
 
 	/**
@@ -9,9 +8,15 @@
 	 * 画像エリアは画面幅で、右から左へ自動で流れ続ける。
 	 * PC と SP ではカットも比率も違う（PC 3:2 / SP 2:3）ため、
 	 * LoopSlider 側の <picture> で出し分けている。
+	 *
+	 * 画像は microCMS の top API（kvImages）から。
 	 */
 
-	const data: KvData = kv;
+	type Props = {
+		data: KvData;
+	};
+
+	let { data }: Props = $props();
 </script>
 
 <section class="kv">

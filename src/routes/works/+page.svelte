@@ -5,8 +5,8 @@
 	import PhotoModal from '$lib/components/ui/PhotoModal.svelte';
 	import { MQ_PC } from '@/lib/config/layout';
 	import { SITE_TITLE } from '@/lib/data/nav';
-	import worksPage from '@/lib/data/worksPage.json';
-	import type { Work, WorksPageData } from '@/lib/data/types';
+	import type { Work } from '@/lib/data/types';
+	import type { PageProps } from './$types';
 
 	/**
 	 * WORKS ページ（カンプの WORKS_pc / WORKS_sp）
@@ -27,11 +27,13 @@
 	 *
 	 * 絞り込みは切り替えボタン（aria-pressed）で行う。押した瞬間に
 	 * 一覧を差し替えるだけで、ページ遷移も URL の変更もしない。
-	 * カテゴリと作品は CMS 管理を想定して JSON から流し込む。
+	 * カテゴリと作品は microCMS の works API から流し込む。
 	 * カンプに見出しは無いので、h1 は読み上げ用に視覚的に隠している。
 	 */
 
-	const data: WorksPageData = worksPage;
+	let { data }: PageProps = $props();
+
+	const works = $derived(data.works);
 
 	/** 一覧の列数（カンプ: SP 2 列 / PC 3 列） */
 	const COLS_SP = 2;
@@ -59,9 +61,9 @@
 	/** 絞り込み後の一覧。拡大表示の送り順もこれに揃う */
 	const items = $derived.by(() => {
 		const id = currentId;
-		if (id === null) return data.items;
+		if (id === null) return works.items;
 
-		return data.items.filter((item) => item.categories.includes(id));
+		return works.items.filter((item) => item.categories.includes(id));
 	});
 
 	/**
@@ -110,10 +112,10 @@
 				aria-pressed={currentId === null}
 				onclick={() => select(null)}
 			>
-				{data.allLabel}
+				{works.allLabel}
 			</button>
 
-			{#each data.categories as category (category.id)}
+			{#each works.categories as category (category.id)}
 				<button
 					class="filter__btn"
 					class:filter__btn--current={currentId === category.id}

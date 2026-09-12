@@ -12,6 +12,15 @@ import { defineConfig } from 'vite';
  */
 const PLANNED_ROUTES = ['/shop'];
 
+/**
+ * 中身の件数によっては 1 ページも書き出されないルート
+ *
+ * NEWS が 1 ページに収まっているうちは /news/page/[page] に該当する
+ * ページ番号が無く、クローラからも見えない。記事が増えれば自然に
+ * 書き出されるので、ここだけは「1 つも書き出されなかった」を許す。
+ */
+const MAY_BE_EMPTY_ROUTES = ['/news/page/[page]'];
+
 export default defineConfig({
 	plugins: [
 		sveltekit({
@@ -31,6 +40,12 @@ export default defineConfig({
 			},
 
 			prerender: {
+				handleUnseenRoutes: ({ routes, message }) => {
+					const unexpected = routes.filter((route) => !MAY_BE_EMPTY_ROUTES.includes(route));
+
+					if (unexpected.length > 0) throw new Error(message);
+				},
+
 				handleHttpError: ({ path, referrer, message }) => {
 					const isPlanned = PLANNED_ROUTES.some(
 						(route) => path === route || path.startsWith(`${route}/`)

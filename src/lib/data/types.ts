@@ -1,8 +1,10 @@
 /**
- * CMS から流し込む想定のデータ型
+ * ページに流し込むデータ型
  *
- * 実体は src/lib/data/*.json。将来 CMS の API に差し替えるときは
- * このファイルの型を満たすレスポンスを返せばコンポーネントは変更不要。
+ * TOP / ABOUT / WORKS / NEWS は microCMS から取る。レスポンスをここの型へ
+ * 詰め替えるのは src/lib/server/cms。CMS に項目が無いもの（EXHIBITION /
+ * CONTACT / フッター / 利用規約など）は src/lib/data/*.json のまま。
+ * コンポーネントはどちらの出どころもこの型だけを見る。
  */
 
 /** 画像 1 枚 */
@@ -73,8 +75,10 @@ export type Work = Photo & {
 	 * 1 点が複数のカテゴリに入る（STREET かつ AWARD WORKS など）。
 	 */
 	categories: string[];
-	/** 出展した展示 */
+	/** 出展した展示や作品の説明（CMS の caption） */
 	exhibition?: string;
+	/** 受賞歴 */
+	award?: string;
 	/** 機材（ボディ / レンズ） */
 	gear?: string;
 	/** 撮影設定 */
@@ -92,7 +96,10 @@ export type Work = Photo & {
  * WorksPageData.allLabel で持つ。
  */
 export type WorkCategory = {
-	/** Work.categories から参照する識別子 */
+	/**
+	 * Work.categories から参照する識別子。
+	 * CMS 側はセレクトフィールドなので、ラベルがそのまま識別子になる。
+	 */
 	id: string;
 	/** ボタンに出すラベル */
 	label: string;
@@ -121,26 +128,74 @@ export type ExhibitionData = {
 };
 
 /**
+ * EXHIBITION ページの動画 1 本
+ *
+ * 再生前はサムネイル（poster）と再生ボタンだけを出し、押されて
+ * はじめて動画を読み込む。src が未入稿のうちは ExhibitionEntry.movies を
+ * 空配列にしておくと MOVIE のブロックごと出力されない。
+ */
+export type ExhibitionMovie = {
+	/** 再生前に出すサムネイル。カンプの縦横比は 16:9 */
+	poster: Photo;
+	/** サムネイルの下に添えるタイトル */
+	title: string;
+	/** 動画ファイル。static 配下のパス、または外部の URL */
+	src: string;
+};
+
+/**
+ * 開催情報の 1 行
+ *
+ * note は本文に添える小さい注記（「※初日のみ15:00開始」など）。
+ * PC は本文の右に並び、SP は次の行に落ちる。text を持たず
+ * note だけの行も作れる。
+ */
+export type ExhibitionInfoLine = {
+	/** 本文。改行は 
+（white-space: pre-line で反映） */
+	text?: string;
+	/** 本文に添える注記 */
+	note?: string;
+};
+
+/**
+ * 開催情報の 1 ブロック（会期 / 会場 / ギャラリートークショー …）
+ *
+ * 項目も見出しの文言も展示ごとに変わるので、まとめてデータ側で持つ。
+ */
+export type ExhibitionSection = {
+	/** 項目名（"会期" など） */
+	heading: string;
+	lines: ExhibitionInfoLine[];
+};
+
+/**
  * EXHIBITION ページの展示 1 件
  *
  * 切り替えボタンのラベルだけは「三代写心（2026）」のように年号付きで、
  * 見出しの title とは別物なので分けて持つ。
  */
 export type ExhibitionEntry = {
-	/** 切り替えボタンと本文の紐付け（aria-controls）に使う識別子 */
+	/** 切り替えボタンと本文の紐付けに使う識別子 */
 	id: string;
 	/** 切り替えボタンのラベル */
 	label: string;
-	/** 展示会ポスター。カンプの縦横比は 17:24 */
-	image: Photo;
+	/** 展示会ポスター。表・裏のように複数枚を縦に並べる */
+	images: Photo[];
 	title: string;
-	subtitle: string;
+	/**
+	 * タイトルの言語。"en"（Duality）は英字フォントで組む。
+	 * 省略時は日本語。
+	 */
+	titleLang?: 'ja' | 'en';
+	/** タイトルに添えるサブタイトル。無い展示もある */
+	subtitle?: string;
 	/** 見出しの下に出す会期（"2026.10.14 - 19"） */
 	date: string;
-	/** 会期。ラベル「会期：」はテンプレート側で付ける */
-	period: string;
-	/** 会場。ラベル「会場：」はテンプレート側で付ける */
-	venue: string;
+	/** 動画。未入稿のうちは空配列にしておく */
+	movies: ExhibitionMovie[];
+	/** 並び順がそのまま開催情報の並び順になる */
+	sections: ExhibitionSection[];
 };
 
 /**
@@ -158,7 +213,7 @@ export type ExhibitionPageData = {
 export type NewsItem = {
 	date: string;
 	title: string;
-	/** 新着ラベル（NEW）を出すかどうか。CMS 側で立てる想定 */
+	/** 新着ラベル（NEW）を出すかどうか。CMS の label で立てる */
 	isNew?: boolean;
 	/** 詳細ページ。無い場合はリンクにせずテキストのまま出す */
 	link?: string;
@@ -176,24 +231,18 @@ export type NewsData = {
  * 一覧ページは本文まで持つ（詳細ページを作るときはこれを使う）。
  */
 export type NewsArticle = {
-	/**
-	 * 詳細ページの URL に使う識別子（/news/[id]）。
-	 * CMS 側で定義される id をそのまま入れる想定で、いまは連番の仮値。
-	 */
+	/** 詳細ページの URL に使う識別子（/news/[id]）。CMS のコンテンツ ID */
 	id: string;
-	/** カンプの表記に合わせた "2026.8.22" 形式 */
+	/**
+	 * カンプの表記に合わせた "2026.8.22" 形式。CMS の自由入力なので
+	 * "2026.7.19–25" のような会期表記も入る
+	 */
 	date: string;
 	title: string;
+	/** 新着ラベル（NEW）を出すかどうか。CMS の label で立てる */
+	isNew?: boolean;
 	/** CMS が吐く HTML をそのまま持つ生テキスト */
 	body: string;
-};
-
-/** NEWS ページ（一覧＋ページネーション） */
-export type NewsPageData = {
-	/** 1 ページあたりの表示件数。カンプは 10 件 */
-	perPage: number;
-	/** 並び順がそのまま一覧の表示順になる（新しい順） */
-	items: NewsArticle[];
 };
 
 /**
@@ -262,16 +311,26 @@ export type AwardRow = {
 	contents: string;
 };
 
-/** ABOUT ページ */
-export type AboutPageData = {
+/**
+ * ABOUT ページのうち CMS に項目が無い部分
+ *
+ * 実体は src/lib/data/aboutPage.json。
+ */
+export type AboutProfileData = {
 	name: string;
 	visual: AboutVisual;
 	/** 段落の区切りは空行（\n\n）。white-space で反映する */
 	ja: string;
 	en: string;
 	sns: SnsLink[];
+};
+
+/** ABOUT ページ（プロフィール + CMS 管理の受賞履歴 / 個展 / 書籍） */
+export type AboutPageData = AboutProfileData & {
 	awards: AwardRow[];
+	/** 1 件 = "展示名 + 会期" の 1 行 */
 	exhibitions: string[];
+	/** 1 件 = 1 冊 */
 	books: string[];
 };
 

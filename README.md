@@ -13,6 +13,62 @@ npm run deploy   # ビルド + Cloudflare Workers へデプロイ
 
 ---
 
+## コンテンツ（microCMS）
+
+TOP / ABOUT / WORKS / NEWS の中身は [microCMS](https://kazukoba.microcms.io/) から取る。
+
+| API       | 形式       | 使う場所                                                 |
+| --------- | ---------- | -------------------------------------------------------- |
+| `top`     | オブジェクト | TOP の KV / WORKS / NEWS（WORKS と NEWS は各 API への参照） |
+| `about`   | オブジェクト | ABOUT ページの受賞履歴 / 個展 / 書籍                     |
+| `works`   | リスト     | WORKS ページの一覧・絞り込み・拡大表示                   |
+| `news`    | リスト     | NEWS の一覧 / ページ送り / 詳細                          |
+
+CMS に項目が無いもの（TOP の ABOUT、EXHIBITION、CONTACT、フッター、利用規約、
+ABOUT ページの名前 / 写真 / ステートメント / SNS）は `src/lib/data/*.json` のまま。
+
+### 取得のしくみ
+
+```
+src/lib/server/cms/
+├─ client.ts   エンドポイント・API キー・取得（リストは 100 件ずつ全件）
+├─ types.ts    microCMS のレスポンス型（管理画面のスキーマを写したもの）
+├─ image.ts    画像 URL の縮小・webp 変換
+├─ html.ts     リッチエディタの HTML → テキスト
+└─ index.ts    レスポンスを src/lib/data/types.ts の型へ詰め替える
+```
+
+コンポーネントは今まで通り `src/lib/data/types.ts` の型だけを見る。
+CMS のスキーマが変わっても直すのは `src/lib/server/cms/` だけ。
+
+**全ページ prerender なので、CMS を叩くのはビルド時だけ**。結果は HTML と
+`__data.json` に焼き込まれ、公開後のサイトから microCMS への通信は起きない。
+**CMS を更新したら再ビルド（再デプロイ）する。**
+
+API キーはフロント用の read only で `src/lib/server/cms/client.ts` に直書きしてある。
+`$lib/server` 配下は SvelteKit がクライアントからの import を弾くため、
+ブラウザ向けのバンドルには含まれない。
+
+### 画像
+
+microCMS は入稿された原寸（KV は 6000px 幅）を返すので、画像 API のパラメータで
+表示サイズまで縮めて webp に変換している（`src/lib/server/cms/image.ts`）。
+上限幅は「カンプ上の表示幅 × 2」が目安。KV の 1 枚目で 2.4MB → 320KB になる。
+
+### 増減で気をつけるところ
+
+- **WORKS の絞り込みカテゴリ**はカテゴリ専用の API ではなく、作品側の
+  セレクトフィールドから組み立てる。ボタンの並び順は `src/lib/server/cms/index.ts`
+  の `CATEGORY_ORDER`。CMS で選択肢を増やした分は末尾に並ぶので、間に入れたい
+  ときはこの配列を直す。
+- **NEWS が 10 件以下**のうちは 2 ページ目が無く、`/news/page/[page]` は 1 つも
+  書き出されない。これは正常なので `vite.config.ts` の `handleUnseenRoutes` で
+  このルートだけ許可している。
+- **NEWS の日付**は自由入力。`2026.7.26` のように 1 日に定まる書き方のときだけ
+  `<time datetime>` が付く（`2026.7.19–25` のような会期表記は表示のみ）。
+
+---
+
 ## デプロイ（Cloudflare Workers + BASIC 認証）
 
 `build/` を Workers の静的アセットとして配信し、その手前で [worker/index.ts](worker/index.ts) が
@@ -178,8 +234,13 @@ src/
 │  ├─ components/
 │  │  ├─ Container.svelte      コンテンツ幅のコンテナ
 │  │  └─ ViewportMeasure.svelte 計測レイヤー / --vw を px で供給
-│  └─ config/
-│     └─ layout.ts             ブレークポイント・最大ベース幅（_var.scss のミラー）
+│  ├─ config/
+│  │  └─ layout.ts             ブレークポイント・最大ベース幅（_var.scss のミラー）
+│  ├─ data/
+│  │  ├─ types.ts              ページに流し込むデータ型
+│  │  └─ *.json                CMS に項目が無いページの中身
+│  └─ server/
+│     └─ cms/                  microCMS の取得と型の詰め替え
 ├─ routes/
 │  ├─ +layout.svelte        スプリットレイアウト / グローバル改行クラス
 │  ├─ +layout.ts            prerender = true
