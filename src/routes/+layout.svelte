@@ -165,4 +165,22 @@
 			display: none;
 		}
 	}
+
+	// PC レイアウト（1024 以上）でのみ改行する
+	:global(.pcbr) {
+		display: none;
+
+		@include m.mq("pc") {
+			display: inline;
+		}
+	}
+
+	// モバイルレイアウト（1024 未満 = SP + Tab）でのみ改行する
+	:global(.mobr) {
+		display: inline;
+
+		@include m.mq("pc") {
+			display: none;
+		}
+	}
 </style>

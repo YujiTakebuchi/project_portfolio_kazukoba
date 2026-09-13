@@ -1,6 +1,4 @@
 <script lang="ts">
-	import { page } from '$app/state';
-	import { themeOf } from '@/lib/config/theme';
 	import { termsModal } from '@/lib/state/terms.svelte';
 	import { lockScroll } from '@/lib/utils/scrollLock';
 
@@ -11,10 +9,9 @@
 	 * モーダル。日本語ブロックと英語ブロックを縦に並べただけの構成で、
 	 * 右上のバツ印だけが操作要素。
 	 *
-	 * カンプには「白背景」と「黒背景（KG）」の 2 パターンがある。
-	 * 明るいページでは白、ABOUT のような反転ページと WORKS の拡大表示
-	 * （どちらも地が暗い）の上では黒を使う。
-	 * 既定はページの配色（themeOf）で、拡大表示からだけ 'dark' を明示する。
+	 * 地は全ページ共通で黒背景（カンプの黒パターン / 地 KG・文字 SOFT WHITE）。
+	 * カンプには白背景のパターンもあるが、ABOUT の反転ページや WORKS の
+	 * 拡大表示の上にも重なるため、どこから開いても同じ見た目に統一している。
 	 *
 	 * 開閉状態はルートに 1 つだけ置くこのコンポーネントと、各所の
 	 * フッターとで共有する必要があるため @/lib/state/terms.svelte に置いた。
@@ -23,18 +20,22 @@
 	 * Escape での閉じるはブラウザ標準の挙動に任せている。
 	 * WORKS の拡大表示（こちらも showModal）の上に重ねて開いても、
 	 * 後から開いた方がトップレイヤーの最前面に来るのでそのまま成立する。
+	 *
+	 * ただし showModal() は中の最初の要素（閉じるボタン）へ自動でフォーカスを
+	 * 当てるため、実機ではそこにブラウザ既定のフォーカスリング（水色の枠）が
+	 * 出てしまう。開いた直後だけ、枠を持たないダイアログ自身（tabindex="-1"）へ
+	 * 移している。Tab を押せば中の要素へ入るのでフォーカストラップは成立する。
 	 */
 
 	let dialog = $state<HTMLDialogElement>();
 
-	/** 呼び出し側の指定が無ければページの配色に従う */
-	const isDark = $derived((termsModal.variant ?? themeOf(page.url.pathname)) === 'dark');
-
 	$effect(() => {
 		if (!dialog) return;
 
-		if (termsModal.isOpen && !dialog.open) dialog.showModal();
-		else if (!termsModal.isOpen && dialog.open) dialog.close();
+		if (termsModal.isOpen && !dialog.open) {
+			dialog.showModal();
+			dialog.focus();
+		} else if (!termsModal.isOpen && dialog.open) dialog.close();
 	});
 
 	// 開いている間は背面のスクロールを止める。
@@ -50,8 +51,8 @@
      状態がずれないよう、close イベントから共有状態を戻す -->
 <dialog
 	class="terms"
-	class:terms--dark={isDark}
 	bind:this={dialog}
+	tabindex="-1"
 	aria-labelledby="termsHeading"
 	onclose={() => termsModal.close()}
 >
@@ -79,6 +80,10 @@
 	@use "@/styles/function" as f;
 
 	.terms {
+		// 開いた直後のフォーカスはここに来る。画面いっぱいの要素なので、
+		// 枠が出ると全面に水色のフレームが回ってしまう
+		outline: none;
+
 		// リセットで全要素の background を透過にしているので明示する
 		position: fixed;
 		inset: 0;
@@ -91,9 +96,9 @@
 		overflow-y: auto;
 		overscroll-behavior: contain;
 
-		// 白背景パターン（カンプ: 地 SOFT WHITE / 文字 KG）
-		background-color: v.$c-bg;
-		color: v.$c-text;
+		// 全ページ共通で黒背景パターン（カンプ: 地 KG / 文字 SOFT WHITE）
+		background-color: v.$c-text;
+		color: v.$c-bg;
 
 		opacity: 0;
 		transition:
@@ -107,13 +112,6 @@
 			@starting-style {
 				opacity: 0;
 			}
-		}
-
-		// 黒背景パターン（カンプ: 地 KG / 文字 SOFT WHITE）。
-		// ABOUT のような反転ページと WORKS の拡大表示の上で使う
-		&--dark {
-			background-color: v.$c-text;
-			color: v.$c-bg;
 		}
 
 		// 地はモーダル自身が塗るので、標準のバックドロップは透明にする

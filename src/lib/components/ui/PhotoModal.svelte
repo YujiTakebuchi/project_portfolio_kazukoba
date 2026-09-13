@@ -25,7 +25,11 @@
 	 *
 	 * 実体は <dialog> の showModal()。フォーカストラップ・背面の
 	 * inert 化・Escape での閉じるはブラウザ標準の挙動に任せている。
-	 * 右下の矢印で前後の作品へ送る（端は反対側へループ）。
+	 * 右下の矢印で前後の作品へ送る（端は反対側へループ）。	 *
+	 * ただし showModal() は中の最初の要素へ自動でフォーカスを当てるため、
+	 * 実機ではそこにブラウザ既定のフォーカスリング（水色の枠）が出てしまう。
+	 * 開いた直後だけ、枠を持たないダイアログ自身（tabindex="-1"）へ移している。
+	 * Tab を押せば中の要素へ順に入るので、フォーカストラップはそのまま成立する。
 	 */
 
 	type Props = {
@@ -63,8 +67,10 @@
 	$effect(() => {
 		if (!dialog) return;
 
-		if (isOpen && !dialog.open) dialog.showModal();
-		else if (!isOpen && dialog.open) dialog.close();
+		if (isOpen && !dialog.open) {
+			dialog.showModal();
+			dialog.focus();
+		} else if (!isOpen && dialog.open) dialog.close();
 	});
 
 	// 開いている間は背面のスクロールを止める（ヘッダーのドロワーと同じ仕組み）。
@@ -89,6 +95,7 @@
 <dialog
 	class="modal"
 	bind:this={dialog}
+	tabindex="-1"
 	aria-label="作品の拡大表示"
 	onclose={close}
 	onkeydown={onKeydown}
@@ -185,12 +192,10 @@
 		{/if}
 
 		<!-- カンプではモーダル内にもフッターがある（著作権表記を常に出すため）。
-		     見た目は Footer.svelte の PC / SP と同じ組みで、色だけ反転させている。
-		     利用規約モーダルはこの上に重ねて開くので、地の暗さに合わせて
-		     反転パターン（カンプの黒背景）を明示する -->
+		     見た目は Footer.svelte の PC / SP と同じ組みで、色だけ反転させている -->
 		<div class="modal__footer">
 			<p class="modal__copyright">© Kazu Kobayashi</p>
-			<button class="modal__notice" type="button" onclick={() => termsModal.open('dark')}>
+			<button class="modal__notice" type="button" onclick={() => termsModal.open()}>
 				Copyright / Image Use
 			</button>
 		</div>
@@ -203,6 +208,10 @@
 	@use "@/styles/function" as f;
 
 	.modal {
+		// 開いた直後のフォーカスはここに来る。画面いっぱいの要素なので、
+		// 枠が出ると全面に水色のフレームが回ってしまう
+		outline: none;
+
 		// リセットで全要素の background を透過にしているので明示する
 		position: fixed;
 		inset: 0;

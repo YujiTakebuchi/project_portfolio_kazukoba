@@ -122,11 +122,16 @@ export type ExhibitionMovie = {
  * note は本文に添える小さい注記（「※初日のみ15:00開始」など）。
  * PC は本文の右に並び、SP は次の行に落ちる。text を持たず
  * note だけの行も作れる。
+ *
+ * sub は本文と同じ組みのまま同じ扱いにしたい続き（トークショーの
+ * タイトルなど）。note と同じく PC は本文の右、モバイルは次の行。
  */
 export type ExhibitionInfoLine = {
 	/** 本文。改行は 
 （white-space: pre-line で反映） */
 	text?: string;
+	/** 本文に続く文字列。PC は本文の右、モバイルは次の行に落ちる */
+	sub?: string;
 	/** 本文に添える注記 */
 	note?: string;
 };

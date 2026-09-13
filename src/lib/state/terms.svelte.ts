@@ -1,5 +1,3 @@
-import type { Theme } from '@/lib/config/theme';
-
 /**
  * 利用規約モーダルの開閉状態
  *
@@ -10,28 +8,19 @@ import type { Theme } from '@/lib/config/theme';
  *
  *   import { termsModal } from '@/lib/state/terms.svelte';
  *
- *   termsModal.open();        // ページの配色に合わせる
- *   termsModal.open('dark');  // 反転配色で開く（拡大表示の上など）
+ *   termsModal.open();
+ *
+ * 配色は全ページ共通（黒背景）なので、呼び出し側が渡すものは無い。
  */
 
 let opened = $state(false);
-let variant = $state<Theme | null>(null);
 
 export const termsModal = {
 	get isOpen() {
 		return opened;
 	},
 
-	/** 呼び出し側が指定した配色。null ならページの配色に従う */
-	get variant() {
-		return variant;
-	},
-
-	/**
-	 * @param force 配色を固定したいときに渡す。省略時はページの配色に従う
-	 */
-	open(force: Theme | null = null) {
-		variant = force;
+	open() {
 		opened = true;
 	},
 

@@ -25,6 +25,11 @@
 	 *
 	 * 実体は <dialog> の showModal()。フォーカストラップ・背面の inert 化・
 	 * Escape での閉じるはブラウザ標準の挙動に任せている。
+	 *
+	 * ただし showModal() は中の最初の要素へ自動でフォーカスを当てるため、
+	 * 実機ではそこにブラウザ既定のフォーカスリング（水色の枠）が出てしまう。
+	 * 開いた直後だけ、枠を持たないダイアログ自身（tabindex="-1"）へ移している。
+	 * Tab を押せば中の要素へ順に入るので、フォーカストラップはそのまま成立する。
 	 */
 
 	let isOpen = $state(false);
@@ -42,8 +47,10 @@
 	$effect(() => {
 		if (!dialog) return;
 
-		if (isOpen && !dialog.open) dialog.showModal();
-		else if (!isOpen && dialog.open) dialog.close();
+		if (isOpen && !dialog.open) {
+			dialog.showModal();
+			dialog.focus();
+		} else if (!isOpen && dialog.open) dialog.close();
 	});
 
 	// 開いている間は背面（.center）のスクロールを止める
@@ -115,7 +122,14 @@
 </header>
 
 <!-- SP 用メニュー（カンプの menu_sp） -->
-<dialog class="drawer" id="drawerNav" bind:this={dialog} aria-label="メニュー" onclose={close}>
+<dialog
+	class="drawer"
+	id="drawerNav"
+	bind:this={dialog}
+	tabindex="-1"
+	aria-label="メニュー"
+	onclose={close}
+>
 	<div class="drawer__inner">
 		<!-- カンプではパネルの上にヘッダーがそのまま乗っている。
 		     ハンバーガーの位置がバツ印に置き換わる -->
@@ -294,6 +308,10 @@
 	// 中央寄せは __inner に持たせている。
 
 	.drawer {
+		// 開いた直後のフォーカスはここに来る。画面いっぱいの要素なので
+		// 枠が出ると全面に水色のフレームが回ってしまう
+		outline: none;
+
 		position: fixed;
 		inset: 0;
 		z-index: 100;

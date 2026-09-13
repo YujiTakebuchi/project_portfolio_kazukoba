@@ -9,7 +9,7 @@ import type {
 	WorksPageData
 } from '@/lib/data/types';
 import { getList, getObject } from './client';
-import { htmlToLines, htmlToText } from './html';
+import { htmlToBlocks, htmlToText } from './html';
 import { imageUrl, toPhoto } from './image';
 import type { CmsAbout, CmsExif, CmsNews, CmsTop, CmsWork } from './types';
 
@@ -184,8 +184,9 @@ export const getAbout = async (
 		exhibitions: (about.exhibition ?? []).map((row) =>
 			[row.title, htmlToText(row.detail)].filter(Boolean).join('  ')
 		),
-		// 1 冊 = 1 段落
-		books: htmlToLines(about.books ?? '')
+		// 1 冊 = 1 ブロック（段落）。1 冊を <br> で折り返して書いても
+		// 2 冊に割れず、その改行はそのまま出る
+		books: htmlToBlocks(about.books ?? '')
 	};
 };
 

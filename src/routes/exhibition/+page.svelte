@@ -140,10 +140,9 @@
 				{
 					heading: 'ギャラリートークショー',
 					lines: [
-						{
-							text: `2019年3月1日(金) 19:00 - 20:00　— another sky —
-スペシャルゲスト：桃井一至（写真家）`
-						}
+						// 「— another sky —」は PC では日時に続けて並び、モバイルでは次の行へ
+						{ text: '2019年3月1日(金) 19:00 - 20:00', sub: '— another sky —' },
+						{ text: 'スペシャルゲスト：桃井一至（写真家）' }
 					]
 				}
 			]
@@ -230,6 +229,7 @@
 								{#each section.lines as line}
 									<p class="info__line">
 										{#if line.text}<span class="info__text">{line.text}</span>{/if}
+										{#if line.sub}<span class="info__sub">{line.sub}</span>{/if}
 										{#if line.note}<span class="info__note">{line.note}</span>{/if}
 									</p>
 								{/each}
@@ -488,7 +488,10 @@
 			}
 		}
 
-		&__text {
+		// 本文と、本文に続く文字列（sub）。どちらも __line の flex の子なので、
+		// PC は同じ行に gap ぶん空けて並び、モバイルでは次の行に落ちる
+		&__text,
+		&__sub {
 			white-space: pre-line;
 		}
 

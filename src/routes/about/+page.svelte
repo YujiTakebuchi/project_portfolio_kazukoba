@@ -27,20 +27,6 @@
 	let { data }: PageProps = $props();
 
 	const about = $derived(data.about);
-
-	/**
-	 * 自己紹介（日本語 / 英語）
-	 *
-	 * 段落の改行はここに書いた改行がそのまま出る（CSS の white-space:
-	 * pre-line）。行頭に空白が入らないよう、字下げせずに書くこと。
-	 */
-	const JA = `1969年、東京都生まれ。祖父、父に続く三代目の写真家。家業の写真機店「カメラ三陽堂」でカメラに囲まれて育ち、写真家・小林基治に師事。
-目の前の光景から、光、色、形を捉え、一枚の写真として成立する瞬間を選び取る。新たな作品制作を続け、個展や団体展を中心に発表している。`;
-
-	const EN = `Born in Tokyo in 1969.
-A third-generation photographer, he grew up surrounded by cameras at his family's camera shop, SANYODO, and studied under photographer Motoharu Kobayashi.
-He finds light, color, and form in the scenes before him, choosing the moment they come together as a photograph.
-He continues to create new work and present it through solo and group exhibitions.`;
 </script>
 
 <svelte:head>
@@ -77,8 +63,16 @@ He continues to create new work and present it through solo and group exhibition
 			<div class="about__body">
 				<h2 class="about__name">Kazu Kobayashi</h2>
 
-				<p class="about__ja">{JA}</p>
-				<p class="about__en">{EN}</p>
+				<!-- 自己紹介（日本語 / 英語）
+				     本文幅が PC 510 / モバイル 335 と大きく違うので、改行位置は
+				     デバイスごとに変える（クラスは +layout.svelte のグローバル）。
+				       <br>              : 両方で改行
+				       <br class="mobr"> : モバイル（1024 未満）だけで改行
+				       <br class="pcbr"> : PC（1024 以上）だけで改行
+				     非表示側の <br> の前後に改行や空白を入れると、そこが 1 文字ぶんの
+				     余白として残ってしまう。1 段落は必ず 1 行で書くこと。 -->
+				<p class="about__ja">1969年、東京都生まれ。祖父、父に続く三代目の写真家。家業の写真機店「カメラ三陽堂」でカメラに囲まれて育ち、写真家・小林基治に師事。<br />目の前の光景から、光、色、形を捉え、一枚の写真として成立する瞬間を選び取る。新たな作品制作を続け、個展や団体展を中心に発表している。</p>
+				<p class="about__en">Born in Tokyo in 1969.<br />A third-generation photographer, he grew up surrounded by cameras at his family's camera shop, SANYODO, and studied under photographer Motoharu Kobayashi.<br />He finds light, color, and form in the scenes before him, choosing the moment they come together as a photograph.<br />He continues to create new work and present it through solo and group exhibitions.</p>
 
 				<ul class="sns">
 					<li>
@@ -258,10 +252,9 @@ He continues to create new work and present it through solo and group exhibition
 			}
 		}
 
-		// 改行は JSON 側の \n、段落の区切りは空行（\n\n）で表す
+		// 改行はテンプレート側の <br>（デバイスごとに位置を変えている）
 		&__ja {
 			margin-top: f.vw(25);
-			white-space: pre-line;
 			// 長音符・小書き仮名を行頭に送らない（カンプと同じ禁則）
 			line-break: strict;
 
@@ -272,7 +265,6 @@ He continues to create new work and present it through solo and group exhibition
 
 		&__en {
 			margin-top: f.vw(55);
-			white-space: pre-line;
 			color: v.$c-dark-sub;
 			@include m.font(f.vw(14), 1.7, 0.05, 400, "en");
 
@@ -473,6 +465,12 @@ He continues to create new work and present it through solo and group exhibition
 
 		@include m.mq("pc") {
 			margin-top: f.vwPc(14);
+		}
+
+		// リッチテキストの <br> は項目を割らずに改行として残るので、
+		// 1 項目の中の改行をそのまま出す
+		&__item {
+			white-space: pre-line;
 		}
 
 		&__item + &__item {
