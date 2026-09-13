@@ -100,17 +100,20 @@ export type WorksPageData = {
 /**
  * EXHIBITION ページの動画 1 本
  *
- * 再生前はサムネイル（poster）と再生ボタンだけを出し、押されて
- * はじめて動画を読み込む。src が未入稿のうちは ExhibitionEntry.movies を
- * 空配列にしておくと MOVIE のブロックごと出力されない。
+ * 実体は YouTube。ページを開いただけで YouTube につながらないよう、
+ * 再生前はサムネイル（自前で持つ画像）と再生ボタンだけを出し、
+ * 押されてはじめて埋め込みプレイヤーに差し替える。
+ *
+ * 動画がまだ無いものも見た目だけは出す。youtubeId を省くと枠と
+ * 再生ボタンだけが並び、押しても何も起きない。
  */
 export type ExhibitionMovie = {
-	/** 再生前に出すサムネイル。カンプの縦横比は 16:9 */
-	poster: Photo;
 	/** サムネイルの下に添えるタイトル */
 	title: string;
-	/** 動画ファイル。static 配下のパス、または外部の URL */
-	src: string;
+	/** YouTube の動画 ID（https://youtu.be/<id> の <id> の部分） */
+	youtubeId?: string;
+	/** 再生前に出すサムネイル。カンプの縦横比は 16:9 */
+	poster?: Photo;
 };
 
 /**

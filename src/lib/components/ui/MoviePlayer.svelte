@@ -4,12 +4,16 @@
 	/**
 	 * 動画 1 本（カンプ EXHIBITION の「動画埋め込み」）
 	 *
-	 * 最初はサムネイルと再生ボタンだけを出し、押されてはじめて
-	 * 動画を読み込む（preload="none"）。サムネイルは <video> の
-	 * poster に渡しているので、再生に切り替わるときも画が飛ばない。
+	 * 実体は YouTube だが、最初から iframe を置くと開いただけで
+	 * YouTube に接続してしまい、読み込みも重い。そのため再生前は
+	 * サムネイル（自前で持つ画像）と再生ボタンだけを出し、押された
+	 * ときに初めてプレイヤーを差し込む。autoplay はその操作の続きなので効く。
 	 *
-	 * 再生ボタンを押したあとはブラウザ標準のコントロールに任せる。
-	 * 一時停止しても最初のサムネイルには戻さない。
+	 * 再生に切り替わったあとはプレイヤー標準の操作に任せる。
+	 * 接続先は youtube-nocookie.com。
+	 *
+	 * 動画がまだ無いもの（三代写心の告知動画）も見た目だけは出す。
+	 * この場合は枠と再生ボタンを並べるだけで、押せる要素は作らない。
 	 */
 
 	type Props = {
@@ -18,38 +22,57 @@
 
 	let { movie }: Props = $props();
 
-	let video = $state<HTMLVideoElement>();
-
-	/** 再生ボタンが押されたか。押されるまでコントロールは出さない */
+	/** 再生ボタンが押されたか。押されるまで YouTube には接続しない */
 	let started = $state(false);
 
-	const play = () => {
-		started = true;
-		video?.play();
-	};
+	const embedSrc = $derived(
+		`https://www.youtube-nocookie.com/embed/${movie.youtubeId}?autoplay=1&rel=0`
+	);
 </script>
 
 <div class="movie">
 	<div class="movie__frame">
-		<!-- svelte-ignore a11y_media_has_caption -->
-		<video
-			class="movie__video"
-			bind:this={video}
-			src={movie.src}
-			poster={movie.poster.src}
-			controls={started}
-			preload="none"
-			playsinline
-		></video>
-
-		{#if !started}
+		{#if !movie.youtubeId}
+			{#if movie.poster}
+				<img
+					class="movie__poster"
+					src={movie.poster.src}
+					alt={movie.poster.alt}
+					width={movie.poster.width}
+					height={movie.poster.height}
+					loading="lazy"
+					decoding="async"
+				/>
+			{/if}
+			<img class="movie__icon" src="/img/icon/play.svg" alt="" width="60" height="60" />
+		{:else if started}
+			<iframe
+				class="movie__player"
+				src={embedSrc}
+				title={movie.title}
+				allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+				referrerpolicy="strict-origin-when-cross-origin"
+				allowfullscreen
+			></iframe>
+		{:else}
 			<button
 				class="movie__play"
 				type="button"
 				aria-label="{movie.title} を再生"
-				onclick={play}
+				onclick={() => (started = true)}
 			>
-				<img src="/img/icon/play.svg" alt="" width="60" height="60" />
+				{#if movie.poster}
+					<img
+						class="movie__poster"
+						src={movie.poster.src}
+						alt={movie.poster.alt}
+						width={movie.poster.width}
+						height={movie.poster.height}
+						loading="lazy"
+						decoding="async"
+					/>
+				{/if}
+				<img class="movie__icon" src="/img/icon/play.svg" alt="" width="60" height="60" />
 			</button>
 		{/if}
 	</div>
@@ -72,39 +95,47 @@
 			gap: f.vwPc(15);
 		}
 
-		// 再生ボタンを重ねるための箱。カンプの縦横比は 16:9
+		// サムネイルとプレイヤーが入れ替わっても高さが動かないよう、
+		// 箱の側で縦横比を決めておく。カンプ通り 16:9
 		&__frame {
 			position: relative;
 			aspect-ratio: 16 / 9;
+			background-color: #000;
 		}
 
-		&__video {
+		&__player {
 			display: block;
 			width: 100%;
 			height: 100%;
-			background-color: #000;
-			object-fit: cover;
 		}
 
 		// サムネイル全面をボタンにする。アイコンだけを押させると
 		// 指では狙いにくいので、当たり判定は動画と同じ大きさにする。
 		&__play {
-			position: absolute;
-			inset: 0;
-			display: flex;
-			justify-content: center;
-			align-items: center;
+			display: block;
+			width: 100%;
+			height: 100%;
 			@include m.linkHover;
+		}
 
-			img {
-				// カンプ: SP 50 / PC 60
-				width: f.vw(50);
-				height: f.vw(50);
+		&__poster {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+		}
 
-				@include m.mq("pc") {
-					width: f.vwPc(60);
-					height: f.vwPc(60);
-				}
+		&__icon {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			translate: -50% -50%;
+			// カンプ: SP 50 / PC 60
+			width: f.vw(50);
+			height: f.vw(50);
+
+			@include m.mq("pc") {
+				width: f.vwPc(60);
+				height: f.vwPc(60);
 			}
 		}
 

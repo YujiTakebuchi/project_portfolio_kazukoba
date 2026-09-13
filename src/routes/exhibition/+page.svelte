@@ -27,8 +27,8 @@
 	 * 「押した状態」を持つ普通のボタン（aria-pressed）で組んでいる。
 	 *
 	 * ポスターの枚数・動画の本数・開催情報の項目は展示ごとに違うので、
-	 * 下の配列をそのまま流し込む。動画が未入稿のうちは movies が
-	 * 空配列で、MOVIE のブロックごと出力されない。
+	 * 下の配列をそのまま流し込む。動画がまだ無いもの（三代写心の告知動画）は
+	 * youtubeId を持たせず、枠と制作中の文言だけを出す。
 	 *
 	 * 開催情報の本文の改行はここに書いた改行がそのまま出る（CSS の
 	 * white-space: pre-line）。行頭に空白が入らないよう、字下げせずに書くこと。
@@ -56,7 +56,7 @@
 			title: '三代写心',
 			subtitle: 'ーカメラ三陽堂に宿った三人の写真家ー',
 			date: '2026.10.14 - 19',
-			movies: [],
+			movies: [{ title: '告知動画' }],
 			sections: [
 				{
 					heading: '会期',
@@ -103,7 +103,28 @@
 			title: 'Duality',
 			titleLang: 'en',
 			date: '2019.2.27 - 3.10',
-			movies: [],
+			movies: [
+				{
+					youtubeId: '2blugkano84',
+					poster: {
+						src: '/img/exhibition/movie-2blugkano84.jpg',
+						alt: '',
+						width: 1280,
+						height: 720
+					},
+					title: 'ドキュメンタリービデオ「撮影日和 小林一隆と写真の旅」'
+				},
+				{
+					youtubeId: '0EQXQH5k2uc',
+					poster: {
+						src: '/img/exhibition/movie-0EQXQH5k2uc.jpg',
+						alt: '',
+						width: 1280,
+						height: 720
+					},
+					title: '小林一隆 トークショー メッセージ'
+				}
+			],
 			sections: [
 				{
 					heading: '会期',
@@ -194,7 +215,7 @@
 						<h3 class="movies__label">MOVIE</h3>
 
 						<div class="movies__list">
-							{#each current.movies as movie (movie.src)}
+							{#each current.movies as movie (movie.title)}
 								<MoviePlayer {movie} />
 							{/each}
 						</div>
