@@ -13,6 +13,11 @@
 	 *   PC : 左に写真、右にキャプション（写真の下端で揃える）
 	 *   SP : 写真の下にキャプションを縦積み
 	 *
+	 * PC の写真は「画面からキャプション・矢印・フッターを除いた枠へ、
+	 * 縦横比のまま一番大きく収まるサイズ」で出す（__figure 参照）。
+	 * 画面の縦横比によって幅・高さのどちらで頭打ちになるかが入れ替わるので、
+	 * 横長の作品でも画面が横に広ければそのぶん大きくなる。
+	 *
 	 * 矢印とフッターは画面下端への貼り付けではなく、コンテンツの下に
 	 * 続けて置いている。中身が 1 画面に収まるうちは余白を吸って下端に
 	 * 並ぶので見た目は変わらないが、キャプションが長いときはモーダルごと
@@ -44,16 +49,6 @@
 
 	const isOpen = $derived(index !== null);
 	const current = $derived(index === null ? undefined : items[index]);
-
-	/**
-	 * 縦長の作品か（PC の表示高さを切り替える）
-	 *
-	 * 縦長は画面高さの 86%、横長・正方形は 71% を基準にする。
-	 * 元画像のサイズが無いときは横長扱い（71%）。
-	 */
-	const isPortrait = $derived(
-		!!current?.width && !!current?.height && current.height > current.width
-	);
 
 	const close = () => (index = null);
 
@@ -107,7 +102,6 @@
 
 	<div
 		class="modal__inner"
-		class:modal__inner--portrait={isPortrait}
 		style:--photo-ratio={current?.width && current?.height
 			? current.width / current.height
 			: undefined}
@@ -277,30 +271,33 @@
 			padding: f.vw(80) 0 f.vw(18);
 			pointer-events: none;
 
-			// PC の写真の高さ（__figure が使う）。
-			//
-			//   --photo-h       : 画面高さに対する基準値
-			//   --photo-reserve : 写真の上下に必ず要る高さ
-			//                     （上パディング 20 + 下パディング 20
-			//                      + 矢印 12+45 + フッター 27+23.8）
-			//   --photo-ratio   : 元画像の縦横比（w/h）。テンプレートから渡す
-			//
-			// 低い画面でこれを割り込むと矢印やフッターが押し出されるので、
-			// そのときだけ reserve 側が効いて写真が縮む。
-			--photo-h: 71svh;
-			// 上パディング 66 + 下パディング 20 + フッター 27+23.8。
-			// 矢印は absolute なので流れの高さを取らない
-			--photo-reserve: #{f.vwPc(137)};
-			// 比率が不明なときは幅で頭打ちにしない
-			--photo-ratio: 0.0001;
-
-			&--portrait {
-				--photo-h: 86svh;
-			}
+			// 元画像の縦横比（w/h）。テンプレートから渡す。
+			// 取れなかったときは正方形扱い（はみ出しは contain が面倒を見る）
+			--photo-ratio: 1;
 
 			@include m.mq("pc") {
-				// PC は写真の高さを svh で決め打ちしていて 1 画面に収まる。
-				// 矢印（__nav）も下端からの絶対配置なので、高さを固定する
+				// --- PC で写真に使える枠 ---
+				//
+				//   --modal-w            : 写真 + キャプションを並べられる横幅
+				//   --photo-avail-w / -h : 写真 1 枚ぶんの枠。
+				//                          ここへ縦横比のまま収める（__figure）
+				//
+				// モーダルは画面いっぱいに出るので、本文と同じ 1280 での
+				// 頭打ち（--content-w）は掛けない。左右に 50 だけ残して、
+				// 広い画面で余った幅はすべて写真に回す。
+				// 1280 ではちょうどカンプのコンテンツ幅（1180）と同じ。
+				--modal-w: max(var(--content-w), calc(var(--screen-w) - #{f.vwPc(100)}));
+				--info-w: #{f.vwPc(380)};
+				--body-gap: #{f.vwPc(26)};
+				// 写真の上下に必ず要る高さ。
+				// 上パディング 66 + 矢印 12+45 + フッター 27+23.8 + 下パディング 20。
+				// 矢印も流れの中にあるので、ここに入れておけば写真と重ならない
+				--photo-reserve: #{f.vwPc(194)};
+				--photo-avail-w: calc(var(--modal-w) - var(--info-w) - var(--body-gap));
+				--photo-avail-h: calc(100svh - var(--photo-reserve));
+
+				// 1 画面に収める（写真の大きさは __figure 側で決まる）
+				width: var(--modal-w);
 				height: 100%;
 				padding: f.vwPc(66) 0 f.vwPc(20);
 			}
@@ -366,7 +363,7 @@
 				display: flex;
 				justify-content: center;
 				align-items: flex-end;
-				gap: f.vwPc(26);
+				gap: var(--body-gap);
 			}
 		}
 
@@ -375,68 +372,56 @@
 				// 写真の幅ぶんだけ取る（列を埋めない）。
 				// これで写真 + キャプションのまとまりが中央に寄る
 				flex: none;
-				min-width: 0;
-				display: flex;
-				justify-content: flex-end;
-				align-items: flex-end;
 
-				// 写真の表示高さ。ここを確定させて中の img を縦幅合わせにする。
+				// --- 枠を「写真の表示サイズ」そのものにする ---
 				//
-				// max-height と height: auto の組み合わせだと、元画像が小さい
-				// ときに内在サイズどまりで拡大されない（400px 幅の作品が
-				// そのまま小さく出てしまう）。高さを確定させておけば
-				// 元画像の大きさに関わらず同じ高さで表示できる。
+				// --photo-avail-w / -h の枠に、縦横比のまま一番大きく収まる
+				// 寸法を 2 辺とも出している。つまり
 				//
-				// 基準は画面高さに対する割合（縦長 86% / 横長 71%）。
-				// 固定 px の上限は持たせず、画面が高いほど写真も大きくなる。
+				//   横長の作品 → 幅で頭打ち。高さは 幅 ÷ 比率
+				//   縦長の作品 → 高さで頭打ち。幅は 高さ × 比率
 				//
-				// 第 3 項は写真エリアの幅（1180 − キャプション 380 − 余白 26）
-				// いっぱいまで広げたときの高さ。横長の作品は高い画面だと
-				// 高さより先に幅で頭打ちになるので、これを入れておかないと
-				// 枠だけ高くなって写真の上に空きができる。
-				height: min(
-					var(--photo-h),
-					calc(100svh - var(--photo-reserve)),
-					calc(#{f.vwPc(774)} / var(--photo-ratio))
-				);
+				// が自動で切り替わるので、画面のサイズ・縦横比がどうでも
+				// 余っているほうの辺いっぱいまで写真が伸びる。
+				//
+				// 2 辺とも確定させているのが大事なところ。
+				//
+				//   - 片側を auto にすると、元画像が小さいときに内在サイズ
+				//     どまりで拡大されない（400px 幅の作品が小さく出る）
+				//   - 高さだけ決めると、横長の作品は幅で頭打ちになったぶん
+				//     枠に空きが出て、キャプションとの下端揃えが崩れる
+				//
+				// 余った幅は __body の justify-content: center が左右へ
+				// 等分するので、写真が小さいときも中央に収まって見える。
+				width: min(var(--photo-avail-w), calc(var(--photo-avail-h) * var(--photo-ratio)));
+				height: min(var(--photo-avail-h), calc(var(--photo-avail-w) / var(--photo-ratio)));
 			}
 		}
 
-		// SP は横幅いっぱい。低い画面でも収まるように上限だけ持たせる。
+		// SP は縦横比のまま横幅いっぱい。高さの上限は持たせない。
 		//
-		// ここを f.vw() で引くとベース幅に比例してしまい、同じ SP
-		// レイアウトでも幅の広い端末（768〜1023px）で控除が効きすぎる。
-		// 画面高に対する割合で持つ（375×750 でこれまでと同じ 410 相当）。
+		// 上限（旧 max-height: 55svh）を付けると、縦長の作品は枠だけ
+		// 横幅いっぱいのまま中の画像が縮み、左右に余りが出てしまう。
+		// 縦は伸ばせるので、収まらないぶんは .modal ごと縦スクロールさせる。
 		&__img {
 			width: 100%;
 			height: auto;
-			max-height: 55svh;
 			object-fit: contain;
 
 			@include m.mq("pc") {
-				// 縦幅合わせ。__figure が高さを決めているので、それに揃える。
-				//
-				// SP 用の max-height は必ず打ち消すこと。f.vw() は SP 基準
-				// （375）の関数なので、PC のベース幅 1280 では
-				// 340 × 1280/375 ≒ 1160px に膨らみ、画面高がそれ未満だと
-				// max-height が 0 以下に潰れて写真が出なくなる。
-				max-height: none;
-
-				// 横に長い作品は max-width で頭打ちにし、object-fit: contain が
-				// 縦横比を保つ。そのとき余るのは上側だけにして、
-				// キャプションとの下端揃えを崩さない
-				width: auto;
-				max-width: 100%;
+				// __figure が縦横比どおりの枠になっているので、それを埋める。
+				// 端数で 1px 余っても歪まないよう contain は残しておく
+				width: 100%;
 				height: 100%;
-				object-position: bottom;
 			}
 		}
 
 		&__info {
 			@include m.mq("pc") {
-				// カンプ: 1180 のうち 380
+				// カンプ: 1180 のうち 380。写真の枠もここを差し引いて決まるので
+				// 寸法は __inner の --info-w で一元管理する
 				flex: none;
-				width: f.vwPc(380);
+				width: var(--info-w);
 			}
 		}
 
@@ -492,14 +477,11 @@
 			margin-top: f.vw(12);
 
 			@include m.mq("pc") {
-				// 流れから外して、コンテンツ（写真 + キャプション）の
-				// 下端と矢印の下端が揃うようにする。
-				// bottom はフッターぶん（27 + 23.8）＋下パディング 20
-				position: absolute;
-				right: 0;
-				bottom: f.vwPc(71);
+				// PC も流れの中に置く。__main が余りを吸うので見える位置は
+				// 変わらず（コンテンツの下・右端）、矢印ぶんの高さが
+				// --photo-reserve に入るので写真と重ならない
 				gap: f.vwPc(20);
-				margin-top: 0;
+				margin-top: f.vwPc(12);
 			}
 		}
 
