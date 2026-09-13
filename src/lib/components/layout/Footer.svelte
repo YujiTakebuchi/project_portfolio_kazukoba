@@ -1,7 +1,5 @@
 <script lang="ts">
 	import Container from '$lib/components/Container.svelte';
-	import footer from '@/lib/data/footer.json';
-	import type { FooterData } from '@/lib/data/types';
 	import { termsModal } from '@/lib/state/terms.svelte';
 
 	/**
@@ -15,15 +13,13 @@
 	 * モーダル本体はルートの +layout.svelte にあるので、ここは
 	 * 共有状態を open するだけ。見た目はカンプ通り下線付きのテキスト。
 	 */
-
-	const data: FooterData = footer;
 </script>
 
 <Container tag="footer">
 	<div class="footer">
-		<p class="footer__copyright">{data.copyright}</p>
+		<p class="footer__copyright">© Kazu Kobayashi</p>
 		<button class="footer__notice" type="button" onclick={() => termsModal.open()}>
-			{data.noticeLabel}
+			Copyright / Image Use
 		</button>
 	</div>
 </Container>

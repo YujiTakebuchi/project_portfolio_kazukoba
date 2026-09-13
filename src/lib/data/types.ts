@@ -3,8 +3,8 @@
  *
  * TOP / ABOUT / WORKS / NEWS は microCMS から取る。レスポンスをここの型へ
  * 詰め替えるのは src/lib/server/cms。CMS に項目が無いもの（EXHIBITION /
- * CONTACT / フッター / 利用規約など）は src/lib/data/*.json のまま。
- * コンポーネントはどちらの出どころもこの型だけを見る。
+ * CONTACT / フッター / 利用規約など）は各コンポーネントに直接書いてある
+ * ので、ここにあるのは CMS から流れてくるデータの型だけ。
  */
 
 /** 画像 1 枚 */
@@ -35,26 +35,6 @@ export type NavItem = {
 /** KV スライダー */
 export type KvData = {
 	images: Photo[];
-};
-
-/**
- * ABOUT の名前ブロック（日本語 / 英語で 1 組ずつ）
- *
- * roles は所属・肩書きを 1 件ずつ持つ。SP は 1 行ずつ改行し、
- * PC は区切り文字でつないで 1 行に流す（区切りは CSS 側で付ける）。
- */
-export type AboutProfile = {
-	/** 名前の上に出す肩書き（"写真家・アーティスト"） */
-	role: string;
-	name: string;
-	roles: string[];
-};
-
-/** ステートメント（ABOUT） */
-export type AboutData = {
-	ja: AboutProfile;
-	en: AboutProfile;
-	link: string;
 };
 
 /** WORKS スライダー（TOP のセクション） */
@@ -117,18 +97,6 @@ export type WorksPageData = {
 	items: Work[];
 };
 
-/** EXHIBITION */
-export type ExhibitionData = {
-	image: Photo;
-	title: string;
-	subtitle: string;
-	/** 会期 */
-	period: string;
-	/** 会場 */
-	venue: string;
-	link: string;
-};
-
 /**
  * EXHIBITION ページの動画 1 本
  *
@@ -174,6 +142,7 @@ export type ExhibitionSection = {
 /**
  * EXHIBITION ページの展示 1 件
  *
+ * 実体は src/routes/exhibition/+page.svelte の ITEMS。
  * 切り替えボタンのラベルだけは「三代写心（2026）」のように年号付きで、
  * 見出しの title とは別物なので分けて持つ。
  */
@@ -198,17 +167,6 @@ export type ExhibitionEntry = {
 	movies: ExhibitionMovie[];
 	/** 並び順がそのまま開催情報の並び順になる */
 	sections: ExhibitionSection[];
-};
-
-/**
- * EXHIBITION ページ
- *
- * 過去の展示を切り替えボタンで出し分ける。TOP のセクション
- * （ExhibitionData）は「最新の 1 件」だけを持つ別のデータ。
- */
-export type ExhibitionPageData = {
-	/** 並び順がそのまま切り替えボタンの並び順。先頭が初期表示 */
-	items: ExhibitionEntry[];
 };
 
 /** NEWS の 1 件 */
@@ -248,60 +206,6 @@ export type NewsArticle = {
 };
 
 /**
- * フッター
- *
- * noticeLabel（Copyright / Image Use）はページ遷移ではなく
- * 利用規約モーダルを開くボタンなので、リンク先は持たない。
- */
-export type FooterData = {
-	copyright: string;
-	noticeLabel: string;
-};
-
-/** 利用規約モーダルの 1 言語分 */
-export type TermsSection = {
-	title: string;
-	/** 段落内の改行は \n で表現する（CSS の white-space: pre-line で反映） */
-	body: string;
-};
-
-/** 利用規約モーダル（日本語 + 英語の 2 ブロック） */
-export type TermsData = {
-	ja: TermsSection;
-	en: TermsSection;
-};
-
-/** ABOUT の SNS リンク。type がそのままアイコン（/img/icon/sns-{type}.svg）になる */
-export type SnsLink = {
-	type: 'x' | 'instagram' | 'youtube';
-	/** 読み上げ・title 用の名称 */
-	label: string;
-	href: string;
-	/** アイコンの下に出すアカウント名。カンプでは Instagram のみ */
-	handle?: string;
-};
-
-/** 解像度違いの書き出し 1 枚 */
-export type ImageSource = {
-	src: string;
-	/** 元画像のピクセルサイズ。読み込み前の場所取り（CLS 対策）に使う */
-	width: number;
-	height: number;
-};
-
-/**
- * ABOUT のビジュアル
- *
- * PC / SP で書き出しサイズが分かれているので picture で出し分ける。
- * 構図は同じで解像度だけが違う。
- */
-export type AboutVisual = {
-	alt: string;
-	pc: ImageSource;
-	sp: ImageSource;
-};
-
-/**
  * 受賞履歴の 1 年分
  *
  * 同じ年に複数件ぶら下がるので、中身は CMS が吐く HTML をそのまま持つ。
@@ -314,55 +218,15 @@ export type AwardRow = {
 };
 
 /**
- * ABOUT ページのうち CMS に項目が無い部分
+ * ABOUT ページのうち CMS 管理の部分（受賞履歴 / 個展 / 書籍）
  *
- * 実体は src/lib/data/aboutPage.json。
+ * 名前・ビジュアル・自己紹介・SNS は CMS に項目が無いので
+ * src/routes/about/+page.svelte に直接書いてある。
  */
-export type AboutProfileData = {
-	name: string;
-	visual: AboutVisual;
-	/** 段落の区切りは空行（\n\n）。white-space で反映する */
-	ja: string;
-	en: string;
-	sns: SnsLink[];
-};
-
-/** ABOUT ページ（プロフィール + CMS 管理の受賞履歴 / 個展 / 書籍） */
-export type AboutPageData = AboutProfileData & {
+export type AboutPageData = {
 	awards: AwardRow[];
 	/** 1 件 = "展示名 + 会期" の 1 行 */
 	exhibitions: string[];
 	/** 1 件 = 1 冊 */
 	books: string[];
-};
-
-/**
- * CONTACT ページ（カンプの CONTACT_pc / CONTACT_sp）
- *
- * 項目のラベルはフォームの骨格そのものなのでコンポーネント側に置き、
- * 差し替わる文言（カテゴリーの選択肢 / 入力例 / 送信結果の文）だけをここで持つ。
- */
-export type ContactPageData = {
-	/** カテゴリーのプルダウンの選択肢。並び順そのままで出す */
-	categories: string[];
-	/** 各入力欄の入力例（placeholder）。category は未選択のときに出す文 */
-	placeholders: {
-		name: string;
-		email: string;
-		category: string;
-		message: string;
-	};
-	/** 送信ボタンの下に出す文 */
-	messages: {
-		/** 未記入・形式不正があるとき */
-		invalid: string;
-		/** 送信中 */
-		sending: string;
-		/** 送信できたとき */
-		success: string;
-		/** 送信に失敗したとき */
-		failed: string;
-		/** EmailJS の環境変数が未設定のとき */
-		unconfigured: string;
-	};
 };

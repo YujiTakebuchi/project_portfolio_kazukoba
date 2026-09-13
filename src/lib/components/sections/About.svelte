@@ -2,43 +2,47 @@
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
 	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
-	import about from '@/lib/data/about.json';
-	import type { AboutData, AboutProfile } from '@/lib/data/types';
 
 	/**
 	 * ABOUT（カンプの ABOUT）
 	 *
-	 * 幅はコンテンツ幅。日本語 / 英語の名前ブロックはどちらも CMS 管理。
-	 * 所属・肩書き（roles）は SP では 1 行ずつ改行し、PC では区切り文字で
+	 * 幅はコンテンツ幅。日本語 / 英語の名前ブロックを縦に並べる。
+	 * 所属・肩書きは SP では 1 行ずつ改行し、PC では区切り文字で
 	 * つないで 1 行に流す。区切り文字は CSS（--role-sep）で付けるので、
-	 * データ側は言語を問わず「1 件 = 1 要素」で持てばよい。
+	 * マークアップは言語を問わず「1 件 = 1 つの span」で書く。
+	 * span の間に空白を入れると PC で区切り文字の後ろに余白が出るので、
+	 * 改行せずに続けて書くこと。
 	 */
-
-	const data: AboutData = about;
 </script>
-
-{#snippet profile(item: AboutProfile, isEn: boolean)}
-	<div class="about__profile" class:about__profile--en={isEn}>
-		<div class="about__name">
-			<p class="about__role">{item.role}</p>
-			<p class="about__fullName">{item.name}</p>
-		</div>
-		<p class="about__roles">
-			{#each item.roles as role (role)}<span>{role}</span>{/each}
-		</p>
-	</div>
-{/snippet}
 
 <Container tag="section">
 	<div class="about" id="about">
 		<div class="about__body">
 			<SectionTitle text="ABOUT" />
-			{@render profile(data.ja, false)}
-			{@render profile(data.en, true)}
+
+			<div class="about__profile">
+				<div class="about__name">
+					<p class="about__role">写真家・アーティスト</p>
+					<p class="about__fullName">小林一隆</p>
+				</div>
+				<p class="about__roles">
+					<span>一般社団法人 秋耕会　理事</span><span>足立区写真連盟　会長</span><span>日本写真会　同友</span>
+				</p>
+			</div>
+
+			<div class="about__profile about__profile--en">
+				<div class="about__name">
+					<p class="about__role">Photographer &amp; Artist</p>
+					<p class="about__fullName">Kazu Kobayashi</p>
+				</div>
+				<p class="about__roles">
+					<span>Director: Syukoukai Art Society</span><span>President: Adachi Photography Association</span><span>Doyu: Japan Photographic Society</span>
+				</p>
+			</div>
 		</div>
 
 		<div class="about__btn">
-			<ArrowLink href={data.link} label="MORE" ariaLabel="ABOUT をもっと見る" />
+			<ArrowLink href="/about" label="MORE" ariaLabel="ABOUT をもっと見る" />
 		</div>
 	</div>
 </Container>

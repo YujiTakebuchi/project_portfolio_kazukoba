@@ -20,7 +20,7 @@ import type { CmsAbout, CmsExif, CmsNews, CmsTop, CmsWork } from './types';
  * CMS のスキーマが変わってもここだけ直せば済むようにしている。
  *
  * CMS に項目が無いもの（TOP の ABOUT / EXHIBITION / CONTACT / フッター /
- * 利用規約）は src/lib/data/*.json のまま。
+ * 利用規約）は各コンポーネントに直接書いてある。
  */
 
 /**

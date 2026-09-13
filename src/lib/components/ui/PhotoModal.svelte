@@ -1,6 +1,5 @@
 <script lang="ts">
-	import footer from '@/lib/data/footer.json';
-	import type { FooterData, Work } from '@/lib/data/types';
+	import type { Work } from '@/lib/data/types';
 	import { termsModal } from '@/lib/state/terms.svelte';
 	import { lockScroll } from '@/lib/utils/scrollLock';
 
@@ -37,8 +36,6 @@
 
 	let { items, index = $bindable() }: Props = $props();
 
-	const footerData: FooterData = footer;
-
 	let dialog = $state<HTMLDialogElement>();
 
 	const isOpen = $derived(index !== null);
@@ -48,7 +45,7 @@
 	 * 縦長の作品か（PC の表示高さを切り替える）
 	 *
 	 * 縦長は画面高さの 86%、横長・正方形は 71% を基準にする。
-	 * JSON に元画像のサイズが無いときは横長扱い（71%）。
+	 * 元画像のサイズが無いときは横長扱い（71%）。
 	 */
 	const isPortrait = $derived(
 		!!current?.width && !!current?.height && current.height > current.width
@@ -192,9 +189,9 @@
 		     利用規約モーダルはこの上に重ねて開くので、地の暗さに合わせて
 		     反転パターン（カンプの黒背景）を明示する -->
 		<div class="modal__footer">
-			<p class="modal__copyright">{footerData.copyright}</p>
+			<p class="modal__copyright">© Kazu Kobayashi</p>
 			<button class="modal__notice" type="button" onclick={() => termsModal.open('dark')}>
-				{footerData.noticeLabel}
+				Copyright / Image Use
 			</button>
 		</div>
 	</div>

@@ -19,8 +19,9 @@
 	 * SP は写真を先頭に置いた1カラム。
 	 *
 	 * 受賞履歴 / 個展 / 書籍は同じ「区切り線 + 見出し + 一覧」の作りなので、
-	 * .section をまとめて当てている。この 3 つは microCMS の about API から、
-	 * 残りは JSON から。束ねているのは +page.server.ts。
+	 * .section をまとめて当てている。この 3 つだけが microCMS の about API
+	 * （+page.server.ts）から。名前・写真・自己紹介・SNS は CMS に項目が
+	 * 無いのでここに直接書いている。
 	 */
 
 	let { data }: PageProps = $props();
@@ -28,16 +29,18 @@
 	const about = $derived(data.about);
 
 	/**
-	 * 自己紹介（日本語 / 英語）の改行
+	 * 自己紹介（日本語 / 英語）
 	 *
-	 * 改行そのものは CSS の white-space: pre-line が出す。JSON に書いた
-	 * "\n" は読み込んだ時点で改行になっているが、CMS の入力欄のように
-	 * 文字どおりの \n が入る経路もあるので、どちらも改行として扱う。
+	 * 段落の改行はここに書いた改行がそのまま出る（CSS の white-space:
+	 * pre-line）。行頭に空白が入らないよう、字下げせずに書くこと。
 	 */
-	const toLineBreaks = (text: string) => text.split('\\n').join('\n');
+	const JA = `1969年、東京都生まれ。祖父、父に続く三代目の写真家。家業の写真機店「カメラ三陽堂」でカメラに囲まれて育ち、写真家・小林基治に師事。
+目の前の光景から、光、色、形を捉え、一枚の写真として成立する瞬間を選び取る。新たな作品制作を続け、個展や団体展を中心に発表している。`;
 
-	const ja = $derived(toLineBreaks(about.ja));
-	const en = $derived(toLineBreaks(about.en));
+	const EN = `Born in Tokyo in 1969.
+A third-generation photographer, he grew up surrounded by cameras at his family's camera shop, SANYODO, and studied under photographer Motoharu Kobayashi.
+He finds light, color, and form in the scenes before him, choosing the moment they come together as a photograph.
+He continues to create new work and present it through solo and group exhibitions.`;
 </script>
 
 <svelte:head>
@@ -58,42 +61,73 @@
 			<picture class="about__photo">
 				<source
 					media={MQ_PC}
-					srcset={about.visual.pc.src}
-					width={about.visual.pc.width}
-					height={about.visual.pc.height}
+					srcset="/img/about/img_about_visual-pc.jpg"
+					width="940"
+					height="627"
 				/>
 				<img
-					src={about.visual.sp.src}
-					alt={about.visual.alt}
-					width={about.visual.sp.width}
-					height={about.visual.sp.height}
+					src="/img/about/img_about_visual-sp.jpg"
+					alt="河原でカメラを構える写真家 Kazu Kobayashi"
+					width="670"
+					height="447"
 					decoding="async"
 				/>
 			</picture>
 
 			<div class="about__body">
-				<h2 class="about__name">{about.name}</h2>
+				<h2 class="about__name">Kazu Kobayashi</h2>
 
-				<p class="about__ja">{ja}</p>
-				<p class="about__en">{en}</p>
+				<p class="about__ja">{JA}</p>
+				<p class="about__en">{EN}</p>
 
 				<ul class="sns">
-					{#each about.sns as item (item.label)}
-						<li>
-							<a class="sns__link" href={item.href} target="_blank" rel="noopener">
-								<img
-									class="sns__icon"
-									src="/img/icon/sns-{item.type}.svg"
-									alt={item.label}
-									width="34"
-									height="34"
-								/>
-								{#if item.handle}
-									<span class="sns__handle">{item.handle}</span>
-								{/if}
-							</a>
-						</li>
-					{/each}
+					<li>
+						<a
+							class="sns__link"
+							href="https://www.instagram.com/kazukoba_art/"
+							target="_blank"
+							rel="noopener"
+						>
+							<img
+								class="sns__icon"
+								src="/img/icon/sns-instagram.svg"
+								alt="Instagram（作品）"
+								width="34"
+								height="34"
+							/>
+							<span class="sns__handle">@kazukoba_art</span>
+						</a>
+					</li>
+					<li>
+						<a
+							class="sns__link"
+							href="https://www.instagram.com/kazusekaowa/"
+							target="_blank"
+							rel="noopener"
+						>
+							<img
+								class="sns__icon"
+								src="/img/icon/sns-instagram.svg"
+								alt="Instagram（せかおわ）"
+								width="34"
+								height="34"
+							/>
+							<span class="sns__handle">@kazusekaowa</span>
+						</a>
+					</li>
+					<li>
+						<!-- YouTube はチャンネルの URL が未定。決まったら href を差し替える -->
+						<!-- svelte-ignore a11y_invalid_attribute -->
+						<a class="sns__link" href="#" target="_blank" rel="noopener">
+							<img
+								class="sns__icon"
+								src="/img/icon/sns-youtube.svg"
+								alt="YouTube"
+								width="34"
+								height="34"
+							/>
+						</a>
+					</li>
 				</ul>
 
 				<!-- 受賞履歴 -->

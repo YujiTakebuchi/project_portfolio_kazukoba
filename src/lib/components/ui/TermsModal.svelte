@@ -1,8 +1,6 @@
 <script lang="ts">
 	import { page } from '$app/state';
 	import { themeOf } from '@/lib/config/theme';
-	import termsData from '@/lib/data/terms.json';
-	import type { TermsData } from '@/lib/data/types';
 	import { termsModal } from '@/lib/state/terms.svelte';
 	import { lockScroll } from '@/lib/utils/scrollLock';
 
@@ -26,8 +24,6 @@
 	 * WORKS の拡大表示（こちらも showModal）の上に重ねて開いても、
 	 * 後から開いた方がトップレイヤーの最前面に来るのでそのまま成立する。
 	 */
-
-	const data: TermsData = termsData;
 
 	let dialog = $state<HTMLDialogElement>();
 
@@ -65,13 +61,14 @@
 		</button>
 
 		<section class="terms__section">
-			<h2 class="terms__title" id="termsHeading">{data.ja.title}</h2>
-			<p class="terms__text">{data.ja.body}</p>
+			<h2 class="terms__title" id="termsHeading">利用規約</h2>
+			<!-- 改行がそのまま出る（white-space: pre-line）ので、1 段落は 1 行で書く -->
+			<p class="terms__text">本サイトに掲載している写真・作品の著作権は、特記のない限りKazu Kobayashiに帰属します。 写真・作品の転載、出版、その他の利用をご希望の場合は、CONTACTよりお問い合わせください。</p>
 		</section>
 
 		<section class="terms__section">
-			<h2 class="terms__title terms__title--en">{data.en.title}</h2>
-			<p class="terms__text terms__text--en">{data.en.body}</p>
+			<h2 class="terms__title terms__title--en">Terms of Service</h2>
+			<p class="terms__text terms__text--en">All photographs and artworks on this website are copyrighted by Kazu Kobayashi unless otherwise noted. For reproduction, publication, licensing, or other use, please contact us through the CONTACT page.</p>
 		</section>
 	</div>
 </dialog>
@@ -198,7 +195,7 @@
 		// ここでは見出しとの間隔だけ取る（カンプ: SP 28 / PC 30）
 		&__text {
 			margin-top: f.vw(28);
-			// 改行は JSON 側の \n で表す
+			// 本文に改行を入れたくなったときのため
 			white-space: pre-line;
 			// 長音符・小書き仮名を行頭に送らない
 			line-break: strict;

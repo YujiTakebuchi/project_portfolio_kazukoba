@@ -2,20 +2,16 @@
 	import Container from '$lib/components/Container.svelte';
 	import ArrowLink from '$lib/components/ui/ArrowLink.svelte';
 	import SectionTitle from '$lib/components/ui/SectionTitle.svelte';
-	import exhibition from '@/lib/data/exhibition.json';
-	import type { ExhibitionData } from '@/lib/data/types';
 
 	/**
 	 * EXHIBITION（カンプの EXHIBITION）
 	 *
-	 * 幅はコンテンツ幅。画像 / タイトル / サブタイトル / 会期 / 会場は
-	 * すべて CMS 管理を想定して JSON から流し込む。
+	 * 出すのは最新の展示 1 件だけ。詳細（過去の展示を含む）は
+	 * /exhibition にあるので、展示が変わったらこことあちらの両方を直す。
 	 *
 	 * パネル内は PC = 横並び、SP = 縦積み。どちらも relative な
 	 * flex で組んでいるので、テキスト量が増えても崩れない。
 	 */
-
-	const data: ExhibitionData = exhibition;
 </script>
 
 <Container tag="section">
@@ -25,31 +21,33 @@
 		<div class="exhibition__panel">
 			<img
 				class="exhibition__img"
-				src={data.image.src}
-				alt={data.image.alt}
+				src="/img/exhibition/sandaishashin-01.png"
+				alt="三代写心 展示イメージ"
 				loading="lazy"
 				decoding="async"
 			/>
 
 			<div class="exhibition__text">
-				<h3 class="exhibition__title">{data.title}</h3>
-				<p class="exhibition__subtitle">{data.subtitle}</p>
+				<h3 class="exhibition__title">三代写心</h3>
+				<p class="exhibition__subtitle">ーカメラ三陽堂に宿った三人の写真家ー</p>
 
 				<dl class="exhibition__info">
 					<div class="exhibition__infoRow">
 						<dt>会期：</dt>
-						<dd>{data.period}</dd>
+						<dd>
+							2026.10.14 - 19　平日 11:00-19:00 / 土日祝 10:30-18:30（初日は15:00開始、最終日は16:00終了）
+						</dd>
 					</div>
 					<div class="exhibition__infoRow">
 						<dt>会場：</dt>
-						<dd>{data.venue}</dd>
+						<dd>Gallery 蔵（御茶ノ水ソラシティ B1F）</dd>
 					</div>
 				</dl>
 			</div>
 		</div>
 
 		<div class="exhibition__btn">
-			<ArrowLink href={data.link} label="MORE" ariaLabel="EXHIBITION をもっと見る" />
+			<ArrowLink href="/exhibition" label="MORE" ariaLabel="EXHIBITION をもっと見る" />
 		</div>
 	</div>
 </Container>

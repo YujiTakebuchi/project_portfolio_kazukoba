@@ -3,8 +3,7 @@
 	import Header from '$lib/components/layout/Header.svelte';
 	import MoviePlayer from '$lib/components/ui/MoviePlayer.svelte';
 	import { SITE_TITLE } from '@/lib/data/nav';
-	import exhibitionPage from '@/lib/data/exhibitionPage.json';
-	import type { ExhibitionPageData } from '@/lib/data/types';
+	import type { ExhibitionEntry } from '@/lib/data/types';
 
 	/**
 	 * EXHIBITION ページ（カンプの EXHIBITION_三代写心_pc / _sp、
@@ -28,16 +27,112 @@
 	 * 「押した状態」を持つ普通のボタン（aria-pressed）で組んでいる。
 	 *
 	 * ポスターの枚数・動画の本数・開催情報の項目は展示ごとに違うので、
-	 * すべて JSON の配列をそのまま流し込む。動画が未入稿のうちは
-	 * movies が空配列で、MOVIE のブロックごと出力されない。
+	 * 下の配列をそのまま流し込む。動画が未入稿のうちは movies が
+	 * 空配列で、MOVIE のブロックごと出力されない。
+	 *
+	 * 開催情報の本文の改行はここに書いた改行がそのまま出る（CSS の
+	 * white-space: pre-line）。行頭に空白が入らないよう、字下げせずに書くこと。
 	 */
 
-	const data: ExhibitionPageData = exhibitionPage as ExhibitionPageData;
+	/** 並び順がそのまま切り替えボタンの並び順。先頭（最新）が初期表示 */
+	const ITEMS: ExhibitionEntry[] = [
+		{
+			id: 'sandaishashin-2026',
+			label: '三代写心（2026）',
+			images: [
+				{
+					src: '/img/exhibition/sandaishashin-01.png',
+					alt: '「三代写心」展示会ポスター（表）',
+					width: 616,
+					height: 874
+				},
+				{
+					src: '/img/exhibition/sandaishashin-02.png',
+					alt: '「三代写心」展示会ポスター（裏）',
+					width: 633,
+					height: 879
+				}
+			],
+			title: '三代写心',
+			subtitle: 'ーカメラ三陽堂に宿った三人の写真家ー',
+			date: '2026.10.14 - 19',
+			movies: [],
+			sections: [
+				{
+					heading: '会期',
+					lines: [
+						{
+							text: `2026年10月14日(水)〜10月19日(月)
+平日 11:00〜19:00 土日祝 10:30〜18:30`
+						},
+						{ note: '※初日のみ15:00開始、最終日のみ16:00終了' }
+					]
+				},
+				{
+					heading: '会場',
+					lines: [
+						{
+							text: `Gallery 蔵
+御茶ノ水ソラシティ B1F　〒101-0062 東京都千代田区神田駿河台4-6`
+						}
+					]
+				},
+				{
+					heading: 'ギャラリートークショー',
+					lines: [
+						{
+							text: `会場：お茶ナビゲート
+10月17日(土) 14:00〜15:00
+スペシャルゲスト：菅原 隆治 (CAPA編集長)`
+						}
+					]
+				}
+			]
+		},
+		{
+			id: 'duality-2019',
+			label: 'Duality（2019）',
+			images: [
+				{
+					src: '/img/exhibition/duality-01.png',
+					alt: '「Duality」展示会ポスター',
+					width: 599,
+					height: 856
+				}
+			],
+			title: 'Duality',
+			titleLang: 'en',
+			date: '2019.2.27 - 3.10',
+			movies: [],
+			sections: [
+				{
+					heading: '会期',
+					lines: [
+						{ text: '2019年2月27日(水) - 3月10日(日)', note: '※3月4日(月)休み' },
+						{ text: '16:30 - 23:00（日曜15:00 - 21:30）' }
+					]
+				},
+				{
+					heading: '会場',
+					lines: [{ text: 'Photo Bar [sa-yo: ]' }]
+				},
+				{
+					heading: 'ギャラリートークショー',
+					lines: [
+						{
+							text: `2019年3月1日(金) 19:00 - 20:00　— another sky —
+スペシャルゲスト：桃井一至（写真家）`
+						}
+					]
+				}
+			]
+		}
+	];
 
 	/** 表示中の展示の index。カンプ通り先頭（最新）が初期表示 */
 	let index = $state(0);
 
-	const current = $derived(data.items[index]);
+	const current = $derived(ITEMS[index]);
 </script>
 
 <svelte:head>
@@ -52,7 +147,7 @@
 		<h1 class="exhibition__heading">EXHIBITION</h1>
 
 		<div class="switch" role="group" aria-label="展示の切り替え">
-			{#each data.items as item, i (item.id)}
+			{#each ITEMS as item, i (item.id)}
 				<button
 					class="switch__btn"
 					class:switch__btn--current={i === index}

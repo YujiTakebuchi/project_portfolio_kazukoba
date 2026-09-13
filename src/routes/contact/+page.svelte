@@ -2,8 +2,6 @@
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
 	import { SITE_TITLE } from '@/lib/data/nav';
-	import contact from '@/lib/data/contact.json';
-	import type { ContactPageData } from '@/lib/data/types';
 	import { isMailConfigured, sendContactMail } from '@/lib/utils/contactMail';
 
 	/**
@@ -23,7 +21,13 @@
 	 * 送信中 / 成功 / 失敗にも使い回している。
 	 */
 
-	const data: ContactPageData = contact;
+	/** カテゴリーのプルダウンの選択肢。並び順そのままで出す */
+	const CATEGORIES = [
+		'作品のご購入について',
+		'展示・取材のご依頼',
+		'掲載・画像使用について',
+		'その他'
+	];
 
 	/** 送信の進行状況。ボタンの活殺と下の文をこれ 1 つで決める */
 	type Status = 'idle' | 'invalid' | 'sending' | 'success' | 'failed' | 'unconfigured';
@@ -62,15 +66,15 @@
 	const statusText = $derived.by(() => {
 		switch (status) {
 			case 'invalid':
-				return data.messages.invalid;
+				return '必須項目を記入してください。';
 			case 'sending':
-				return data.messages.sending;
+				return '送信中です。そのままお待ちください。';
 			case 'success':
-				return data.messages.success;
+				return '送信しました。お問い合わせありがとうございます。';
 			case 'failed':
-				return data.messages.failed;
+				return '送信に失敗しました。お手数ですが時間をおいて再度お試しください。';
 			case 'unconfigured':
-				return data.messages.unconfigured;
+				return '送信の設定が未完了のため、現在お問い合わせを受け付けられません。';
 			default:
 				return '';
 		}
@@ -148,7 +152,7 @@
 						name="name"
 						type="text"
 						autocomplete="name"
-						placeholder={data.placeholders.name}
+						placeholder="山田 太郎"
 						aria-invalid={submitted && errors.name}
 						bind:value={name}
 					/>
@@ -167,7 +171,7 @@
 						type="email"
 						inputmode="email"
 						autocomplete="email"
-						placeholder={data.placeholders.email}
+						placeholder="example@example.com"
 						aria-invalid={submitted && errors.email}
 						bind:value={email}
 					/>
@@ -193,8 +197,8 @@
 							aria-invalid={submitted && errors.category}
 							bind:value={category}
 						>
-							<option value="" disabled>{data.placeholders.category}</option>
-							{#each data.categories as item (item)}
+							<option value="" disabled>選択してください</option>
+							{#each CATEGORIES as item (item)}
 								<option value={item}>{item}</option>
 							{/each}
 						</select>
@@ -211,7 +215,7 @@
 						class:field__input--error={submitted && errors.message}
 						id="contact-message"
 						name="message"
-						placeholder={data.placeholders.message}
+						placeholder="お問い合わせ内容をご記入ください。"
 						aria-invalid={submitted && errors.message}
 						bind:value={message}
 					></textarea>
