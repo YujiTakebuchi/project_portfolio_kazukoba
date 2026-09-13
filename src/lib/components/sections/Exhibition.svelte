@@ -11,6 +11,9 @@
 	 *
 	 * パネル内は PC = 横並び、SP = 縦積み。どちらも relative な
 	 * flex で組んでいるので、テキスト量が増えても崩れない。
+	 *
+	 * 会期・会場はカンプだと PC で 1 行 / SP で複数行に分かれる。
+	 * その折り返しは exhibition__br（PC で非表示）で作っている。
 	 */
 </script>
 
@@ -35,12 +38,21 @@
 					<div class="exhibition__infoRow">
 						<dt>会期：</dt>
 						<dd>
-							2026.10.14 - 19　平日 11:00-19:00 / 土日祝 10:30-18:30（初日は15:00開始、最終日は16:00終了）
+							2026年10月14日(水)〜10月19日(月)<br />
+							平日 11:00〜19:00<br class="exhibition__br" /> 土日祝 10:30〜18:30
+							<span class="exhibition__note">
+								※初日のみ15:00開始、<br class="exhibition__br" />最終日のみ16:00終了
+							</span>
 						</dd>
 					</div>
 					<div class="exhibition__infoRow">
 						<dt>会場：</dt>
-						<dd>Gallery 蔵（御茶ノ水ソラシティ B1F）</dd>
+						<dd>
+							Gallery 蔵
+							<span class="exhibition__address">
+								御茶ノ水ソラシティ B1F　<br class="exhibition__br" />〒101-0062<br class="exhibition__br" /> 東京都千代田区神田駿河台4-6
+							</span>
+						</dd>
 					</div>
 				</dl>
 			</div>
@@ -67,16 +79,16 @@
 		&__panel {
 			margin-top: f.vw(20);
 			background-color: v.$c-panel;
-			// カンプ: SP は上 30 / 左右 14 / 下 20
-			padding: f.vw(30) f.vw(14) f.vw(20);
+			// カンプ: SP は上下 30 / 左右 14
+			padding: f.vw(30) f.vw(14);
 
 			@include m.mq("pc") {
-				// カンプ: PC は上下 30 / 左 46、画像とテキストの間 50
+				// カンプ: PC は上下 30 / 左右 46、画像とテキストの間 50
 				margin-top: f.vwPc(20);
 				display: flex;
 				align-items: flex-start;
 				gap: f.vwPc(50);
-				padding: f.vwPc(30) 0 f.vwPc(30) f.vwPc(46);
+				padding: f.vwPc(30) f.vwPc(46);
 			}
 		}
 
@@ -95,13 +107,15 @@
 		}
 
 		&__text {
+			// カンプ: 画像とテキストの間 30（SP）
 			margin-top: f.vw(30);
 
 			@include m.mq("pc") {
-				flex: none;
-				width: f.vwPc(470);
-				// カンプ: パネル上端から 57（padding 30 + 27）
-				margin-top: f.vwPc(27);
+				// カンプのテキスト枠は 470 だが、会場の 1 行はそれより長く
+				// はみ出す作りになっている。残り幅を渡して折り返させない。
+				flex: 1;
+				min-width: 0;
+				margin-top: 0;
 			}
 		}
 
@@ -114,24 +128,31 @@
 			}
 		}
 
+		// カンプではタイトルとサブタイトルの間に余白なし（行間のみ）
 		&__subtitle {
-			margin-top: f.vw(10);
 			color: v.$c-accent;
+			// カンプは 1 行。SP は文字幅がテキスト列をわずかに超えるので
+			// 折り返さず、最後の 1 文字ぶんの字間だけ打ち消しておく。
+			white-space: nowrap;
+			margin-right: -0.07em;
 			@include m.font(f.vw(16), 1.6, 0.07, 700);
 
 			@include m.mq("pc") {
-				margin-top: f.vwPc(10);
 				@include m.font(f.vwPc(24), 1.6, 0.07, 700);
 			}
 		}
 
 		&__info {
+			display: flex;
+			flex-direction: column;
+			gap: f.vw(10);
 			margin-top: f.vw(20);
-			@include m.font(f.vw(14), 1.7, 0.05);
+			@include m.font(f.vw(14), 1.8, 0.07);
 
 			@include m.mq("pc") {
-				margin-top: f.vwPc(30);
-				@include m.font(f.vwPc(16), 1.7, 0.07);
+				gap: f.vwPc(10);
+				margin-top: f.vwPc(20);
+				@include m.font(f.vwPc(14), 1.8, 0.07);
 			}
 		}
 
@@ -141,6 +162,34 @@
 
 			dt {
 				flex: none;
+			}
+		}
+
+		// 注釈。2 行目は 1 文字分下げてカンプの字下げに揃える
+		&__note {
+			display: block;
+			padding-left: 1em;
+			text-indent: -1em;
+			@include m.font(f.vw(12), 1.7, 0.1);
+
+			@include m.mq("pc") {
+				@include m.font(f.vwPc(12), 1.7, 0.1);
+			}
+		}
+
+		&__address {
+			display: block;
+			margin-top: f.vw(5);
+
+			@include m.mq("pc") {
+				margin-top: f.vwPc(2);
+			}
+		}
+
+		// SP / Tab だけ改行する
+		&__br {
+			@include m.mq("pc") {
+				display: none;
 			}
 		}
 
