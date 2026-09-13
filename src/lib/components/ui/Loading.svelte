@@ -185,7 +185,7 @@
 			top: 50%;
 			left: 0;
 			width: 100%;
-			height: f.vw(3);
+			height: f.vw(2);
 			background-color: v.$c-bg;
 			transform: translateY(-50%) scaleX(var(--progress, 0));
 			transform-origin: left center;
