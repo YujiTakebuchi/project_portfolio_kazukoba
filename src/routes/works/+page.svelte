@@ -3,8 +3,8 @@
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
 	import PhotoModal from '$lib/components/ui/PhotoModal.svelte';
+	import Seo from '@/lib/components/Seo.svelte';
 	import { MQ_PC } from '@/lib/config/layout';
-	import { SITE_TITLE } from '@/lib/data/nav';
 	import type { Work } from '@/lib/data/types';
 	import type { PageProps } from './$types';
 
@@ -93,10 +93,7 @@
 	};
 </script>
 
-<svelte:head>
-	<title>WORKS | {SITE_TITLE}</title>
-	<meta name="description" content="写真家 Kazu Kobayashi の作品一覧です。" />
-</svelte:head>
+<Seo title="WORKS" description="写真家 Kazu Kobayashi の作品一覧です。" />
 
 <Header />
 

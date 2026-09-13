@@ -2,7 +2,7 @@
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
 	import Pagination from '$lib/components/ui/Pagination.svelte';
-	import { SITE_TITLE } from '@/lib/data/nav';
+	import Seo from '@/lib/components/Seo.svelte';
 	import type { NewsArticle } from '@/lib/data/types';
 	import { toDatetime } from '@/lib/utils/date';
 
@@ -34,10 +34,10 @@
 	const hrefOf = (n: number) => (n === 1 ? '/news' : `/news/page/${n}`);
 </script>
 
-<svelte:head>
-	<title>NEWS{current > 1 ? `（${current}ページ目）` : ''} | {SITE_TITLE}</title>
-	<meta name="description" content="写真家 Kazu Kobayashi からのお知らせ一覧です。" />
-</svelte:head>
+<Seo
+	title={current > 1 ? `NEWS（${current}ページ目）` : 'NEWS'}
+	description="写真家 Kazu Kobayashi からのお知らせ一覧です。"
+/>
 
 <Header />
 

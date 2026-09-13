@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
-	import { SITE_TITLE } from '@/lib/data/nav';
+	import Seo from '@/lib/components/Seo.svelte';
 	import { isMailConfigured, sendContactMail } from '@/lib/utils/contactMail';
 
 	/**
@@ -123,13 +123,10 @@
 	}
 </script>
 
-<svelte:head>
-	<title>CONTACT | {SITE_TITLE}</title>
-	<meta
-		name="description"
-		content="写真家 Kazu Kobayashi へのお問い合わせフォームです。作品のご購入、展示・取材のご依頼、掲載・画像使用のご相談などをお送りいただけます。"
-	/>
-</svelte:head>
+<Seo
+	title="CONTACT"
+	description="写真家 Kazu Kobayashi へのお問い合わせフォームです。作品のご購入、展示・取材のご依頼、掲載・画像使用のご相談などをお送りいただけます。"
+/>
 
 <Header />
 

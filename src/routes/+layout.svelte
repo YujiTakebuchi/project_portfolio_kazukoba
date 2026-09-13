@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { afterNavigate, onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
-	import favicon from '$lib/assets/favicon.svg';
 	import Loading from '@/lib/components/ui/Loading.svelte';
 	import TermsModal from '@/lib/components/ui/TermsModal.svelte';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
@@ -65,10 +64,6 @@
 		enterTimer = setTimeout(() => (phase = 'idle'), ENTER_MS);
 	});
 </script>
-
-<svelte:head>
-	<link rel="icon" href={favicon} />
-</svelte:head>
 
 <!--
 	スプリットレイアウト

@@ -2,7 +2,7 @@
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
 	import MoviePlayer from '$lib/components/ui/MoviePlayer.svelte';
-	import { SITE_TITLE } from '@/lib/data/nav';
+	import Seo from '@/lib/components/Seo.svelte';
 	import type { ExhibitionEntry } from '@/lib/data/types';
 
 	/**
@@ -155,10 +155,7 @@
 	const current = $derived(ITEMS[index]);
 </script>
 
-<svelte:head>
-	<title>EXHIBITION | {SITE_TITLE}</title>
-	<meta name="description" content="写真家 Kazu Kobayashi の展示会情報です。" />
-</svelte:head>
+<Seo title="EXHIBITION" description="写真家 Kazu Kobayashi の展示会情報です。" />
 
 <Header />
 

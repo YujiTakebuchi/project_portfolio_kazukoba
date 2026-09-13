@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
+	import Seo from '@/lib/components/Seo.svelte';
 	import { MQ_PC } from '@/lib/config/layout';
-	import { SITE_TITLE } from '@/lib/data/nav';
 	import type { PageProps } from './$types';
 
 	/**
@@ -29,13 +29,10 @@
 	const about = $derived(data.about);
 </script>
 
-<svelte:head>
-	<title>ABOUT | {SITE_TITLE}</title>
-	<meta
-		name="description"
-		content="写真家 Kazu Kobayashi のプロフィール、受賞履歴、個展、書籍のご紹介です。"
-	/>
-</svelte:head>
+<Seo
+	title="ABOUT"
+	description="写真家 Kazu Kobayashi のプロフィール、受賞履歴、個展、書籍のご紹介です。"
+/>
 
 <Header />
 

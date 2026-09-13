@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import Header from '$lib/components/layout/Header.svelte';
-	import { SITE_TITLE } from '@/lib/data/nav';
+	import Seo from '@/lib/components/Seo.svelte';
 	import type { NewsArticle } from '@/lib/data/types';
 	import { toDatetime } from '@/lib/utils/date';
 
@@ -33,10 +33,7 @@
 	);
 </script>
 
-<svelte:head>
-	<title>{article.title} | NEWS | {SITE_TITLE}</title>
-	<meta name="description" content={description} />
-</svelte:head>
+<Seo title={`${article.title} | NEWS`} {description} type="article" />
 
 <Header />
 

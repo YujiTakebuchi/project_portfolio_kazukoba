@@ -6,19 +6,13 @@
 	import Kv from '$lib/components/sections/Kv.svelte';
 	import News from '$lib/components/sections/News.svelte';
 	import Works from '$lib/components/sections/Works.svelte';
-	import { SITE_TITLE } from '@/lib/data/nav';
+	import Seo from '@/lib/components/Seo.svelte';
 	import type { PageProps } from './$types';
 
 	let { data }: PageProps = $props();
 </script>
 
-<svelte:head>
-	<title>{SITE_TITLE}</title>
-	<meta
-		name="description"
-		content="写真家 Kazu Kobayashi のポートフォリオサイト。作品、展示情報、お知らせを掲載しています。"
-	/>
-</svelte:head>
+<Seo />
 
 <Header />
 

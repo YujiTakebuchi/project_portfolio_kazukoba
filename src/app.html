@@ -5,6 +5,17 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="text-scale" content="scale" />
 		<meta name="theme-color" content="#F2F2F2" />
+
+		<!--
+			favicon
+
+			SVG を読める環境（現行のブラウザ）は favicon.svg、読めない環境と
+			ブックマーク等は favicon.ico、iOS のホーム画面は apple-touch-icon。
+			ルートの /favicon.ico はブラウザが勝手に取りに来るので static に置く。
+		-->
+		<link rel="icon" href="/favicon.ico" sizes="32x32" />
+		<link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 		<link
