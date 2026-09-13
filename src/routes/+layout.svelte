@@ -1,10 +1,18 @@
 <script lang="ts">
+	import { afterNavigate, onNavigate } from '$app/navigation';
 	import { page } from '$app/state';
 	import favicon from '$lib/assets/favicon.svg';
 	import Loading from '@/lib/components/ui/Loading.svelte';
 	import TermsModal from '@/lib/components/ui/TermsModal.svelte';
 	import ViewportMeasure from '@/lib/components/ViewportMeasure.svelte';
 	import { themeOf } from '@/lib/config/theme';
+	import {
+		CONTENT_DELAY_MS,
+		CONTENT_MS,
+		ENTER_MS,
+		LEAVE_MS,
+		VEIL_OUT_MS
+	} from '@/lib/config/transition';
 	import { loadingScreen } from '@/lib/state/loading.svelte';
 	import '@/styles/global.scss';
 
@@ -12,6 +20,50 @@
 
 	/** ABOUT だけ背景を反転させる。配色は global.scss の .theme--dark */
 	const isDark = $derived(themeOf(page.url.pathname) === 'dark');
+
+	/**
+	 * ページ遷移
+	 *
+	 * ページの地の色をした覆い（下の .veil）を下ろして画面を隠し、隠れている
+	 * 間に中身を差し替えて、覆いが引くのに合わせて本文が少し下から持ち上がり
+	 * ながら現れる。尺は src/lib/config/transition.ts。
+	 *
+	 * 覆いは見た目のためだけではなく、差し替えと同時に起きるスクロール位置の
+	 * リセットと、ABOUT との行き来で地の色が入れ替わる瞬間を隠す役目も持つ。
+	 * どちらも覆いが不透明になっている間に済ませている。
+	 *
+	 * 初回表示は Loading.svelte が担当するので、ここでは何もしない。
+	 */
+
+	/** 'idle' 何もしていない / 'leaving' 覆いが下りている / 'entering' 覆いが引いている */
+	let phase = $state<'idle' | 'leaving' | 'entering'>('idle');
+
+	/** 現れきったら idle に戻すためのタイマー */
+	let enterTimer: ReturnType<typeof setTimeout> | undefined;
+
+	onNavigate((navigation) => {
+		// 同じページの中で動くだけ（#リンクなど）なら切り替えではない
+		if (navigation.to?.url.pathname === navigation.from?.url.pathname) return;
+		// 動きを控えたい設定なら、演出を挟まずそのまま差し替える
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+		clearTimeout(enterTimer);
+		phase = 'leaving';
+
+		// SvelteKit は onNavigate が返した Promise を待ってから中身を差し替える。
+		// 覆いが下りきるまで引き延ばすことで、差し替えが覆いの裏で済む。
+		return new Promise<void>((resolve) => {
+			setTimeout(resolve, LEAVE_MS);
+		});
+	});
+
+	afterNavigate(() => {
+		// 初回表示や、上で見送った遷移（同じページ・reduced motion）では動かさない
+		if (phase !== 'leaving') return;
+
+		phase = 'entering';
+		enterTimer = setTimeout(() => (phase = 'idle'), ENTER_MS);
+	});
 </script>
 
 <svelte:head>
@@ -50,12 +102,36 @@
 >
 	<div class="side" aria-hidden="true"></div>
 
-	<div class="center">
+	<div
+		class="center"
+		class:center--entering={phase === 'entering'}
+		style:--content-dur="{CONTENT_MS}ms"
+		style:--content-delay="{CONTENT_DELAY_MS}ms"
+	>
 		{@render children()}
 	</div>
 
 	<div class="side" aria-hidden="true"></div>
 </div>
+
+<!--
+	ページ遷移の覆い
+
+	ページの地の色そのままの 1 枚。リンクを踏むと下りてきて画面を隠し、
+	中身が差し替わったら引いていく（上の <script> を参照）。
+
+	色は .split と同じく --c-page-bg 頼み。ABOUT との行き来では
+	不透明になっている間に切り替わるので、色が変わる瞬間は見えない。
+-->
+<div
+	class="veil"
+	class:theme--dark={isDark}
+	class:veil--leaving={phase === 'leaving'}
+	class:veil--entering={phase === 'entering'}
+	style:--leave-dur="{LEAVE_MS}ms"
+	style:--veil-out-dur="{VEIL_OUT_MS}ms"
+	aria-hidden="true"
+></div>
 
 <!--
 	利用規約モーダル
@@ -114,6 +190,14 @@
 	}
 
 	.center {
+		// ページ遷移で持ち上がる量（カンプには無い演出上の値）。
+		// f.vw() はベース幅に比例するので、そのままだと PC で効きすぎる
+		--rise: #{f.vw(20)};
+
+		@include m.mq("pc") {
+			--rise: #{f.vwPc(20)};
+		}
+
 		// 縦は「ヘッダー → 本文 → フッター」の一列。
 		// フッターだけ margin-top: auto で下端に落とす（下記）。
 		display: flex;
@@ -131,6 +215,29 @@
 		> :global(footer) {
 			margin-top: auto;
 		}
+
+		// 覆いが引くのに合わせて、少し下から持ち上がりながら現れる。
+		//
+		// transition ではなく animation なのは、この要素がページをまたいで
+		// 使い回されるため。transition だと「隠れている状態」を先に作って
+		// おく必要があるが、animation なら開始値を自分で持てる。
+		// クラスが外れる（idle に戻る）と transform ごと消えるので、
+		// 中の position: fixed に含みブロックを作ってしまうこともない。
+		&--entering {
+			animation: pageIn var(--content-dur, 600ms) ease-out var(--content-delay, 60ms) both;
+		}
+	}
+
+	@keyframes pageIn {
+		from {
+			opacity: 0;
+			transform: translateY(var(--rise));
+		}
+
+		to {
+			opacity: 1;
+			transform: none;
+		}
 	}
 
 	.side {
@@ -140,6 +247,44 @@
 
 		@include m.mq("pc") {
 			display: block;
+		}
+	}
+
+	// -----------------------------------------------------------
+	// ページ遷移の覆い
+	// -----------------------------------------------------------
+	//
+	// 画面全体を地の色で塗るだけの 1 枚。不透明度だけを往復させる。
+	//
+	// 下りる（--leaving）と引く（--entering）で尺が違うので、
+	// transition は状態ごとに書き分けている。idle に戻ったときは
+	// すでに不透明度 0 なので、見た目は何も変わらない。
+
+	.veil {
+		position: fixed;
+		inset: 0;
+		// ドロワー（100）やモーダル（200）より前。遷移中は開いているものごと
+		// 覆い隠す。ローディング（1000）だけは常にこれより前に出る
+		z-index: 500;
+		background-color: var(--c-page-bg);
+
+		// 出ていないときは見えず、クリックの邪魔もしない
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity var(--leave-dur, 300ms) ease;
+
+		// --- 下りている間 ---
+		&--leaving {
+			opacity: 1;
+			// 下りきるまでの二度押し・誤タップはここで受け止める
+			pointer-events: auto;
+		}
+
+		// --- 引いている間 ---
+		// まだ覆いは残っているが、次のページはもう触れてよい
+		&--entering {
+			opacity: 0;
+			transition: opacity var(--veil-out-dur, 400ms) ease;
 		}
 	}
 
