@@ -68,7 +68,7 @@
 				       <br class="pcbr"> : PC（1024 以上）だけで改行
 				     非表示側の <br> の前後に改行や空白を入れると、そこが 1 文字ぶんの
 				     余白として残ってしまう。1 段落は必ず 1 行で書くこと。 -->
-				<p class="about__ja">1969年、東京都生まれ。祖父、父に続く三代目の写真家。家業の写真機店「カメラ三陽堂」でカメラに囲まれて育ち、写真家・小林基治に師事。<br />目の前の光景から、光、色、形を捉え、一枚の写真として成立する瞬間を選び取る。新たな作品制作を続け、個展や団体展を中心に発表している。</p>
+				<p class="about__ja">1969年、東京都生まれ。祖父、父に続く三代目の写真家。家業の写真機店「カメラ三陽堂」でカメラに囲まれて育ち、写真家・小林基治に師事。<br />目の前の光景から、光、色、形を捉え、一枚の写真として成立する瞬間を<br class="pcbr">選び取る。新たな作品制作を続け、個展や団体展を中心に発表している。</p>
 				<p class="about__en">Born in Tokyo in 1969.<br />A third-generation photographer, he grew up surrounded by cameras at his family's camera shop, SANYODO, and studied under photographer Motoharu Kobayashi.<br />He finds light, color, and form in the scenes before him, choosing the moment they come together as a photograph.<br />He continues to create new work and present it through solo and group exhibitions.</p>
 
 				<ul class="sns">
