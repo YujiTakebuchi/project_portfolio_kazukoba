@@ -140,7 +140,7 @@
 				{
 					heading: 'ギャラリートークショー',
 					lines: [
-						// 「— another sky —」は PC では日時に続けて並び、モバイルでは次の行へ
+						// 「— another sky —」は PC / モバイルとも日時の次の行へ
 						{ text: '2019年3月1日(金) 19:00 - 20:00', sub: '— another sky —' },
 						{ text: 'スペシャルゲスト：桃井一至（写真家）' }
 					]
@@ -481,15 +481,24 @@
 				flex-direction: row;
 				flex-wrap: wrap;
 				align-items: center;
-				gap: f.vwPc(10);
+				// 横に並ぶもの（注記）との間隔だけ。折り返した行同士は
+				// モバイルと同じく行送りのまま詰めておきたいので row-gap は置かない
+				column-gap: f.vwPc(10);
 			}
 		}
 
-		// 本文と、本文に続く文字列（sub）。どちらも __line の flex の子なので、
-		// PC は同じ行に gap ぶん空けて並び、モバイルでは次の行に落ちる
 		&__text,
 		&__sub {
 			white-space: pre-line;
+		}
+
+		// 本文に続く文字列（sub）は PC / モバイルとも本文の次の行に置く。
+		// モバイルは __line が縦並びなのでそのまま落ちる。PC は横並びなので、
+		// 1 行を占める幅を持たせて flex-wrap に折り返させている
+		&__sub {
+			@include m.mq("pc") {
+				flex-basis: 100%;
+			}
 		}
 
 		&__note {

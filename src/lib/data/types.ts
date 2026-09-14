@@ -124,13 +124,13 @@ export type ExhibitionMovie = {
  * note だけの行も作れる。
  *
  * sub は本文と同じ組みのまま同じ扱いにしたい続き（トークショーの
- * タイトルなど）。note と同じく PC は本文の右、モバイルは次の行。
+ * タイトルなど）。note と違って PC でも本文の次の行に置く。
  */
 export type ExhibitionInfoLine = {
 	/** 本文。改行は 
 （white-space: pre-line で反映） */
 	text?: string;
-	/** 本文に続く文字列。PC は本文の右、モバイルは次の行に落ちる */
+	/** 本文に続く文字列。PC / モバイルとも本文の次の行に落ちる */
 	sub?: string;
 	/** 本文に添える注記 */
 	note?: string;
