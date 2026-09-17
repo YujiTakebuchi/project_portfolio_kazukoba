@@ -364,16 +364,16 @@
 		}
 
 		&__btn {
-			padding: f.vw(12) f.vw(8) f.vw(12) f.vw(17);
+			padding: f.vw(12) f.vw(6) f.vw(12) f.vw(15);
 			border: f.vw(1) solid v.$c-line;
 			color: v.$c-text;
-			@include m.font(f.vw(12), 1.7, 0.07);
+			@include m.font(f.vw(12), 1, 0.07);
 			@include m.linkHover;
 
 			@include m.mq("pc") {
 				padding: f.vwPc(12) f.vwPc(8) f.vwPc(12) f.vwPc(20);
 				border-width: f.vwPc(1);
-				@include m.font(f.vwPc(14), 1.7, 0.07);
+				@include m.font(f.vwPc(14), 1, 0.07);
 			}
 
 			&--current {

@@ -186,16 +186,16 @@
 			// 合計が 339.5 になり、コンテンツ幅 333.75 をわずかに超えて
 			// AWARD WORKS だけ 3 行目に落ちる。16 にすると 315.5 に収まり、
 			// カンプ通りの 2 行組みになる。PC は 1 行に余裕があるので 20 のまま
-			padding: f.vw(12) f.vw(16);
+			padding: f.vw(10) f.vw(15);
 			border: f.vw(1) solid v.$c-line;
 			color: v.$c-text;
-			@include m.font(f.vw(12), 1.7, 0.07, 400, "mont");
+			@include m.font(f.vw(12), 1, 0.07, 400, "mont");
 			@include m.linkHover;
 
 			@include m.mq("pc") {
 				padding: f.vwPc(12) f.vwPc(20);
 				border-width: f.vwPc(1);
-				@include m.font(f.vwPc(14), 1.7, 0.07, 400, "mont");
+				@include m.font(f.vwPc(14), 1, 0.07, 400, "mont");
 			}
 
 			// 選択中（カンプの btn_*_on）。EXHIBITION の切り替えと同じ配色
