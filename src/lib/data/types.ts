@@ -125,15 +125,19 @@ export type ExhibitionMovie = {
  *
  * sub は本文と同じ組みのまま同じ扱いにしたい続き（トークショーの
  * タイトルなど）。note と違って PC でも本文の次の行に置く。
+ *
+ * gapBefore は同じ項目の中で別のまとまりに移るときに立てる
+ * （トークショーが 2 回あるときの 2 回目など）。その行の上だけが空く。
  */
 export type ExhibitionInfoLine = {
-	/** 本文。改行は 
-（white-space: pre-line で反映） */
+	/** 本文。改行は \n（white-space: pre-line で反映） */
 	text?: string;
 	/** 本文に続く文字列。PC / モバイルとも本文の次の行に落ちる */
 	sub?: string;
 	/** 本文に添える注記 */
 	note?: string;
+	/** 直前の行との間を空け、ここから別のまとまりにする */
+	gapBefore?: boolean;
 };
 
 /**

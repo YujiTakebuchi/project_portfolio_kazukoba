@@ -24,7 +24,7 @@
 		<div class="exhibition__panel">
 			<img
 				class="exhibition__img"
-				src="/img/exhibition/sandaishashin-01.png"
+				src="/img/exhibition/sandaishashin-01.webp"
 				alt="三代写心 展示イメージ"
 				loading="lazy"
 				decoding="async"
@@ -39,7 +39,7 @@
 						<dt>会期：</dt>
 						<dd>
 							2026年10月14日(水)〜10月19日(月)<br />
-							平日 11:00〜19:00<br class="exhibition__br" /> 土日祝 10:30〜18:30
+							平日 11:00〜19:00　<br class="exhibition__br" />土日祝 10:30〜18:30
 							<span class="exhibition__note">
 								※初日のみ15:00開始、<br class="exhibition__br" />最終日のみ16:00終了
 							</span>

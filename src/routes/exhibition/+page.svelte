@@ -41,13 +41,13 @@
 			label: '三代写心（2026）',
 			images: [
 				{
-					src: '/img/exhibition/sandaishashin-01.png',
+					src: '/img/exhibition/sandaishashin-01.webp',
 					alt: '「三代写心」展示会ポスター（表）',
 					width: 616,
 					height: 874
 				},
 				{
-					src: '/img/exhibition/sandaishashin-02.png',
+					src: '/img/exhibition/sandaishashin-02.webp',
 					alt: '「三代写心」展示会ポスター（裏）',
 					width: 633,
 					height: 879
@@ -63,7 +63,7 @@
 					lines: [
 						{
 							text: `2026年10月14日(水)〜10月19日(月)
-平日 11:00〜19:00 土日祝 10:30〜18:30`
+平日 11:00〜19:00　土日祝 10:30〜18:30`
 						},
 						{ note: '※初日のみ15:00開始、最終日のみ16:00終了' }
 					]
@@ -129,8 +129,8 @@
 				{
 					heading: '会期',
 					lines: [
-						{ text: '2019年2月27日(水) - 3月10日(日)', note: '※3月4日(月)休み' },
-						{ text: '16:30 - 23:00（日曜15:00 - 21:30）' }
+						{ text: '2019年2月27日(水)〜3月10日(日)', note: '※3月4日(月)休み' },
+						{ text: '16:30〜23:00（日曜15:00〜21:30）' }
 					]
 				},
 				{
@@ -140,9 +140,9 @@
 				{
 					heading: 'ギャラリートークショー',
 					lines: [
-						// 「— another sky —」は PC / モバイルとも日時の次の行へ
-						{ text: '2019年3月1日(金) 19:00 - 20:00', sub: '— another sky —' },
-						{ text: 'スペシャルゲスト：桃井一至（写真家）' }
+						{ text: '2019年3月1日(金) 19:00〜20:00', sub: '— another sky —' },
+						{ text: 'スペシャルゲスト：桃井一至（写真家）' },
+						{ text: '2019年3月2日(土) 19:00〜20:00', sub: '— snow —', gapBefore: true }
 					]
 				}
 			]
@@ -224,7 +224,7 @@
 							<dt class="info__heading">{section.heading}</dt>
 							<dd>
 								{#each section.lines as line}
-									<p class="info__line">
+									<p class="info__line" class:info__line--gap={line.gapBefore}>
 										{#if line.text}<span class="info__text">{line.text}</span>{/if}
 										{#if line.sub}<span class="info__sub">{line.sub}</span>{/if}
 										{#if line.note}<span class="info__note">{line.note}</span>{/if}
@@ -484,6 +484,16 @@
 				// 横に並ぶもの（注記）との間隔だけ。折り返した行同士は
 				// モバイルと同じく行送りのまま詰めておきたいので row-gap は置かない
 				column-gap: f.vwPc(10);
+			}
+		}
+
+		// 別のまとまり（2 回目のトークショーなど）の頭。
+		// カンプ: まとまり同士の間は SP 10、PC 15
+		&__line--gap {
+			margin-top: f.vw(10);
+
+			@include m.mq("pc") {
+				margin-top: f.vwPc(15);
 			}
 		}
 
