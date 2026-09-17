@@ -35,11 +35,11 @@
 		&__slider {
 			@include m.fullBleed;
 			// カンプ: ヘッダーの下端から SP 30 / PC 44
-			margin-top: f.vw(32);
+			margin-top: f.vw(30);
 
 			// LoopSlider へ渡すサイズ（カンプ: SP 375x562 = 2:3）
 			--slider-item-w: #{f.vw(375)};
-			--slider-item-h: #{f.vw(562)};
+			--slider-item-h: #{f.vw(525)};
 			--slider-gap: #{f.vw(5)};
 
 			@include m.mq("pc") {
