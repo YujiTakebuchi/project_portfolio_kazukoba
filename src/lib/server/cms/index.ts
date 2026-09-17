@@ -104,6 +104,7 @@ const toWork = (work: CmsWork): Work => ({
 	gear: gearOf(work.exif),
 	settings: settingsOf(work.exif),
 	location: work.exif?.location,
+	model: work.exif?.photoModel,
 	size: work.exif?.size
 });
 

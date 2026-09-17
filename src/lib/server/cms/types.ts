@@ -47,6 +47,8 @@ export type CmsExif = {
 	exposure?: string;
 	iso?: string;
 	location?: string;
+	/** 被写体のモデル。リッチエディタの HTML */
+	photoModel?: string;
 	/** プリントサイズ */
 	size?: string;
 };
@@ -60,7 +62,7 @@ export type CmsWork = CmsMeta & {
 	exif?: CmsExif;
 	/** 受賞歴 */
 	award?: string;
-	/** 出展した展示・作品の説明 */
+	/** 出展した展示・作品の説明。リッチエディタの HTML */
 	caption?: string;
 };
 

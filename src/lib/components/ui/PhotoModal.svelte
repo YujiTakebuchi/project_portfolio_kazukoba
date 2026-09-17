@@ -130,7 +130,11 @@
 						<h2 class="modal__title">{current.title}</h2>
 
 						{#if current.exhibition}
-							<p class="modal__exhibition">{current.exhibition}</p>
+							<!-- 中身が <p> で包まれて届くので、外側は p ではなく div にする -->
+							<div class="modal__exhibition modal__html">
+								<!-- eslint-disable-next-line svelte/no-at-html-tags -- CMS が吐くキャプション HTML -->
+								{@html current.exhibition}
+							</div>
 						{/if}
 
 						{#if current.award}
@@ -154,6 +158,15 @@
 								<div class="modal__metaRow">
 									<dt>Location：</dt>
 									<dd>{current.location}</dd>
+								</div>
+							{/if}
+							{#if current.model}
+								<div class="modal__metaRow">
+									<dt>model：</dt>
+									<dd class="modal__html">
+										<!-- eslint-disable-next-line svelte/no-at-html-tags -- CMS が吐くモデル名 HTML（SNS のリンク付き） -->
+										{@html current.model}
+									</dd>
 								</div>
 							{/if}
 							{#if current.size}
@@ -464,6 +477,20 @@
 
 			dt {
 				flex: none;
+			}
+		}
+
+		// {@html} で流し込む値（キャプション / model）。スコープが付かないので
+		// :global で当てる。リッチエディタは 1 行でも <p> で包むが、リセットで
+		// 余白が無いのでそのまま組める。リンクだけは地の文と見分けられるよう下線を引く
+		&__html {
+			min-width: 0;
+
+			:global {
+				a {
+					text-decoration: underline;
+					@include m.linkHover;
+				}
 			}
 		}
 

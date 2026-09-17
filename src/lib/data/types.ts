@@ -57,7 +57,10 @@ export type Work = Photo & {
 	 * 1 点が複数のカテゴリに入る（STREET かつ AWARD WORKS など）。
 	 */
 	categories: string[];
-	/** 出展した展示や作品の説明（CMS の caption） */
+	/**
+	 * 出展した展示や作品の説明（CMS の caption）。
+	 * リッチエディタの HTML をそのまま持つ
+	 */
 	exhibition?: string;
 	/** 受賞歴 */
 	award?: string;
@@ -67,6 +70,11 @@ export type Work = Photo & {
 	settings?: string;
 	/** 撮影地。ラベル「Location：」はテンプレート側で付ける */
 	location?: string;
+	/**
+	 * 被写体のモデル。CMS のリッチエディタの HTML（SNS へのリンク付き）を
+	 * そのまま持つ。ラベル「model：」はテンプレート側で付ける
+	 */
+	model?: string;
 	/** プリントサイズ。ラベル「size：」はテンプレート側で付ける */
 	size?: string;
 };
