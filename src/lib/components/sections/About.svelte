@@ -21,7 +21,7 @@
 					<p class="about__fullName">小林一隆</p>
 				</div>
 				<p class="about__roles">
-					<span>一般社団法人 秋耕会　理事</span><span>足立区写真連盟　会長</span><span>日本写真会　同友</span>
+					<span>一般社団法人 秋耕会　理事・広報部長</span><span>足立区写真連盟　会長</span><span>日本写真会　同友</span>
 				</p>
 			</div>
 
@@ -31,7 +31,7 @@
 					<p class="about__fullName">Kazu Kobayashi</p>
 				</div>
 				<p class="about__roles">
-					<span>Director: Syukoukai Art Society</span><span>President: Adachi Photography Association</span><span>Doyu: Japan Photographic Society</span>
+					<span>Director & Head of Public Relations: Syukoukai Art Society</span><span>President: Adachi Photography Association</span><span>Doyu: Japan Photographic Society</span>
 				</p>
 			</div>
 		</div>
