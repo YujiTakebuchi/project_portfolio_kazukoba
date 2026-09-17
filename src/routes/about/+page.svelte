@@ -107,9 +107,7 @@
 						</a>
 					</li>
 					<li>
-						<!-- YouTube はチャンネルの URL が未定。決まったら href を差し替える -->
-						<!-- svelte-ignore a11y_invalid_attribute -->
-						<a class="sns__link" href="#" target="_blank" rel="noopener">
+						<a class="sns__link" href="https://www.youtube.com/@kazukoba_art" target="_blank" rel="noopener">
 							<img
 								class="sns__icon"
 								src="/img/icon/sns-youtube.svg"
