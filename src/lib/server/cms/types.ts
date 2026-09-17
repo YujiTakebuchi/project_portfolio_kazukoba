@@ -39,10 +39,11 @@ export type CmsExif = {
 	/** 撮影モード（"A mode"） */
 	mode?: string;
 	fNumber?: string;
+	/** シャッター速度。単位（sec.）は付けずに入稿する（"1/80"） */
 	shutterSpeed?: string;
 	/** ホワイトバランス */
 	awb?: string;
-	/** 露出補正 */
+	/** 露出補正。単位（EV）は付けずに入稿する（"-0.7"） */
 	exposure?: string;
 	iso?: string;
 	location?: string;
