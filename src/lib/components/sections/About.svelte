@@ -7,11 +7,6 @@
 	 * ABOUT（カンプの ABOUT）
 	 *
 	 * 幅はコンテンツ幅。日本語 / 英語の名前ブロックを縦に並べる。
-	 * 所属・肩書きは SP では 1 行ずつ改行し、PC では区切り文字で
-	 * つないで 1 行に流す。区切り文字は CSS（--role-sep）で付けるので、
-	 * マークアップは言語を問わず「1 件 = 1 つの span」で書く。
-	 * span の間に空白を入れると PC で区切り文字の後ろに余白が出るので、
-	 * 改行せずに続けて書くこと。
 	 */
 </script>
 
@@ -80,15 +75,8 @@
 			display: flex;
 			flex-direction: column;
 			gap: f.vw(15);
-			// 所属・肩書きを PC で 1 行につなぐときの区切り文字
-			--role-sep: "、";
-
 			@include m.mq("pc") {
 				gap: f.vwPc(10);
-			}
-
-			&--en {
-				--role-sep: ", ";
 			}
 		}
 
@@ -137,14 +125,6 @@
 			// SP は 1 件ずつ改行、PC は区切り文字でつないで 1 行に流す
 			span {
 				display: block;
-
-				@include m.mq("pc") {
-					display: inline;
-
-					&:not(:last-child)::after {
-						content: var(--role-sep);
-					}
-				}
 			}
 		}
 
