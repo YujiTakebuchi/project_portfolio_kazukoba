@@ -129,14 +129,6 @@
 					<div class="modal__info">
 						<h2 class="modal__title">{current.title}</h2>
 
-						{#if current.exhibition}
-							<!-- 中身が <p> で包まれて届くので、外側は p ではなく div にする -->
-							<div class="modal__exhibition modal__html">
-								<!-- eslint-disable-next-line svelte/no-at-html-tags -- CMS が吐くキャプション HTML -->
-								{@html current.exhibition}
-							</div>
-						{/if}
-
 						{#if current.award}
 							<p class="modal__award">{current.award}</p>
 						{/if}
@@ -176,6 +168,14 @@
 								</div>
 							{/if}
 						</dl>
+
+						{#if current.exhibition}
+							<!-- 中身が <p> で包まれて届くので、外側は p ではなく div にする -->
+							<div class="modal__exhibition modal__html">
+								<!-- eslint-disable-next-line svelte/no-at-html-tags -- CMS が吐くキャプション HTML -->
+								{@html current.exhibition}
+							</div>
+						{/if}
 					</div>
 				</div>
 			</div>
