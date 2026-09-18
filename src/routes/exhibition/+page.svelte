@@ -94,7 +94,7 @@
 			label: 'Duality（2019）',
 			images: [
 				{
-					src: '/img/exhibition/duality-01.png',
+					src: '/img/exhibition/duality-01.webp',
 					alt: '「Duality」展示会ポスター',
 					width: 599,
 					height: 856
