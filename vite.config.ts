@@ -12,15 +12,6 @@ import { defineConfig } from 'vite';
  */
 const PLANNED_ROUTES = ['/shop'];
 
-/**
- * 中身の件数によっては 1 ページも書き出されないルート
- *
- * NEWS が 1 ページに収まっているうちは /news/page/[page] に該当する
- * ページ番号が無く、クローラからも見えない。記事が増えれば自然に
- * 書き出されるので、ここだけは「1 つも書き出されなかった」を許す。
- */
-const MAY_BE_EMPTY_ROUTES = ['/news/page/[page]'];
-
 export default defineConfig({
 	plugins: [
 		sveltekit({
@@ -40,12 +31,6 @@ export default defineConfig({
 			},
 
 			prerender: {
-				handleUnseenRoutes: ({ routes, message }) => {
-					const unexpected = routes.filter((route) => !MAY_BE_EMPTY_ROUTES.includes(route));
-
-					if (unexpected.length > 0) throw new Error(message);
-				},
-
 				handleHttpError: ({ path, referrer, message }) => {
 					const isPlanned = PLANNED_ROUTES.some(
 						(route) => path === route || path.startsWith(`${route}/`)
@@ -60,9 +45,14 @@ export default defineConfig({
 				}
 			},
 
-			// ポートフォリオは全ページ prerender する前提で静的書き出し。
-			// SSR が必要になったら adapter を差し替える。
-			adapter: adapter()
+			// 静的書き出し。CMS の中身はブラウザで取る（CSR）ので、
+			// ここで書き出されるのは中身が空のページ。
+			//
+			// NEWS の詳細 / ページ送りは、どんな URL があるかがビルド時に
+			// 分からない（記事を取るのがブラウザなので）。この 2 つだけは
+			// 書き出さず、fallback の 200.html から開いてクライアント側で
+			// 組み立てる。200.html を返すのは worker/index.ts。
+			adapter: adapter({ fallback: '200.html' })
 		})
 	]
 });

@@ -4,6 +4,10 @@
  * `build/` の静的アセットを配信する前に BASIC 認証をかける。
  * 認証情報は wrangler の secret（本番）/ `.dev.vars`（ローカル）から読む。
  * どちらも未設定なら常に 401 を返す（フェイルクローズ）。
+ *
+ * NEWS の詳細（/news/<id>）とページ送り（/news/page/<n>）は HTML を
+ * 書き出していない（中身は CMS からブラウザが取る）ので、
+ * アセットに無いページ要求は SPA フォールバックの 200.html で受ける。
  */
 
 export interface Env {
@@ -14,15 +18,72 @@ export interface Env {
 
 const REALM = 'Portfolio';
 
+/**
+ * SPA フォールバックの配信パス。
+ *
+ * 実体は adapter-static が書き出す `build/200.html`。wrangler の
+ * `html_handling: "auto-trailing-slash"` により `.html` を外した
+ * `/200` で引く（`/200.html` はリダイレクトになる）。
+ */
+const FALLBACK_PATH = '/200';
+
 export default {
 	async fetch(request, env) {
 		if (!(await isAuthorized(request, env))) {
 			return unauthorized();
 		}
 
-		return env.ASSETS.fetch(request);
+		const response = await env.ASSETS.fetch(request);
+
+		// 書き出していないページ（NEWS の詳細・ページ送り）はここに落ちてくる。
+		// 画像などが無いときまで HTML を返さないよう、ページ要求だけを拾う
+		if (response.status === 404 && wantsPage(request)) {
+			return (await fallback(request, env)) ?? response;
+		}
+
+		return response;
 	}
 } satisfies ExportedHandler<Env>;
+
+/**
+ * ブラウザがページ（HTML）を求めているか。
+ *
+ * 画像やスクリプトが見つからないときまでフォールバックを返すと、
+ * 本当は 404 なのに HTML が届いてしまう。アドレスバーやリンクからの
+ * 画面遷移（Sec-Fetch-Mode: navigate）だけを拾う。この見出しを送らない
+ * 環境のために Accept も見る。
+ */
+function wantsPage(request: Request): boolean {
+	if (request.method !== 'GET' && request.method !== 'HEAD') {
+		return false;
+	}
+
+	if (request.headers.get('Sec-Fetch-Mode') === 'navigate') {
+		return true;
+	}
+
+	return (request.headers.get('Accept') ?? '').includes('text/html');
+}
+
+/**
+ * SPA フォールバックを返す。
+ *
+ * 中身は空のシェルで、どのページを出すかはクライアント側のルーターが
+ * URL を見て決める。存在しない記事なら SvelteKit のエラーページになる。
+ */
+async function fallback(request: Request, env: Env): Promise<Response | null> {
+	const shell = await env.ASSETS.fetch(new URL(FALLBACK_PATH, request.url));
+
+	if (!shell.ok) {
+		return null;
+	}
+
+	// シェル自体は 200 だが、これは元の URL への応答として返す
+	return new Response(shell.body, {
+		status: 200,
+		headers: shell.headers
+	});
+}
 
 function unauthorized(): Response {
 	return new Response('401 Unauthorized\n', {

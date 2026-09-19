@@ -2,7 +2,7 @@
  * ページに流し込むデータ型
  *
  * TOP / ABOUT / WORKS / NEWS は microCMS から取る。レスポンスをここの型へ
- * 詰め替えるのは src/lib/server/cms。CMS に項目が無いもの（EXHIBITION /
+ * 詰め替えるのは src/lib/cms。CMS に項目が無いもの（EXHIBITION /
  * CONTACT / フッター / 利用規約など）は各コンポーネントに直接書いてある
  * ので、ここにあるのは CMS から流れてくるデータの型だけ。
  */

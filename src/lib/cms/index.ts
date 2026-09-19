@@ -21,6 +21,10 @@ import type { CmsAbout, CmsExif, CmsNews, CmsTop, CmsWork } from './types';
  *
  * CMS に項目が無いもの（TOP の ABOUT / EXHIBITION / CONTACT / フッター /
  * 利用規約）は各コンポーネントに直接書いてある。
+ *
+ * 取得はブラウザで走る（CSR）ので、ビルド時と SSR では EMPTY_* を返して
+ * おき、ハイドレーションのときに取り直して差し替える。振り分けは
+ * 各ページの +page.ts にある。
  */
 
 /**
@@ -57,6 +61,9 @@ const NEW_LABEL = 'new';
  * 一覧に出てきた順で末尾に足す。
  */
 const CATEGORY_ORDER = ['STREET', 'LANDSCAPE', 'PEOPLE', 'LIVE', 'AWARD WORKS'];
+
+/** 絞り込みを外すボタンのラベル */
+const ALL_LABEL = 'ALL';
 
 // -------------------------------------------------------------------
 // WORKS
@@ -140,9 +147,16 @@ const toArticle = (news: CmsNews): NewsArticle => ({
 type Fetcher = typeof globalThis.fetch;
 
 /** TOP（KV / WORKS / NEWS の 3 セクション分） */
-export const getTop = async (
-	fetcher?: Fetcher
-): Promise<{ kv: KvData; works: WorksData; news: NewsData }> => {
+export type TopData = { kv: KvData; works: WorksData; news: NewsData };
+
+/** CMS を取る前の TOP。一覧が 0 件になるだけで、組みはそのまま出る */
+export const EMPTY_TOP: TopData = {
+	kv: { images: [] },
+	works: { images: [], link: LINK.works },
+	news: { items: [], link: LINK.news }
+};
+
+export const getTop = async (fetcher?: Fetcher): Promise<TopData> => {
 	const top = await getObject<CmsTop>('top', fetcher);
 
 	return {
@@ -173,9 +187,12 @@ export const getTop = async (
 };
 
 /** ABOUT ページのうち CMS 管理の部分（受賞履歴 / 個展 / 書籍） */
-export const getAbout = async (
-	fetcher?: Fetcher
-): Promise<Pick<AboutPageData, 'awards' | 'exhibitions' | 'books'>> => {
+export type AboutData = Pick<AboutPageData, 'awards' | 'exhibitions' | 'books'>;
+
+/** CMS を取る前の ABOUT。見出しだけが並び、一覧は空になる */
+export const EMPTY_ABOUT: AboutData = { awards: [], exhibitions: [], books: [] };
+
+export const getAbout = async (fetcher?: Fetcher): Promise<AboutData> => {
 	const about = await getObject<CmsAbout>('about', fetcher);
 
 	return {
@@ -195,12 +212,15 @@ export const getAbout = async (
 	};
 };
 
+/** CMS を取る前の WORKS。ALL のボタンだけが出る */
+export const EMPTY_WORKS: WorksPageData = { allLabel: ALL_LABEL, categories: [], items: [] };
+
 /** WORKS ページ（絞り込みカテゴリ + 一覧） */
 export const getWorks = async (fetcher?: Fetcher): Promise<WorksPageData> => {
 	const works = await getList<CmsWork>('works', fetcher);
 
 	return {
-		allLabel: 'ALL',
+		allLabel: ALL_LABEL,
 		categories: categoriesOf(works),
 		items: works.map(toWork)
 	};

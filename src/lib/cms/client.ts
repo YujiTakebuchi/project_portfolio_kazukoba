@@ -1,15 +1,12 @@
-import { building } from '$app/environment';
-
 /**
  * microCMS の取得クライアント
  *
- * このサイトは全ページ prerender（adapter-static）なので、ここで取った
- * データはビルド時に HTML と __data.json へ焼き込まれる。公開後のサイトが
- * microCMS を叩くことは無いので、CMS を更新したら再ビルドする。
+ * 取得はすべてブラウザで走る（CSR）。ページの HTML はビルド時に書き出す
+ * が、中身は空のまま焼かれていて、ハイドレーションのときにここから
+ * 取り直して流し込む。CMS を更新したら再ビルドなしで反映される。
  *
- * $lib/server 配下は SvelteKit がクライアントからの import を弾くため、
- * API キーがブラウザ向けのバンドルに混ざることはない。
- * （キー自体はフロント用の read only なので、漏れても閲覧しかできない）
+ * その代わり API キーはフロント側のバンドルに含まれる。キーはフロント用の
+ * read only なので、漏れても閲覧しかできない（書き換えはできない）。
  */
 
 const BASE_URL = 'https://kazukoba.microcms.io/api/v1';
@@ -19,7 +16,7 @@ const API_KEY = 'mBu2V3LAJE1q34jm1vo8a7HPCI8Ad20La59H';
 /** list 形式 API の 1 回あたりの取得件数（microCMS の上限） */
 const LIMIT = 100;
 
-/** SvelteKit の load が渡してくる fetch。省略時はグローバル（entries 用） */
+/** SvelteKit の load が渡してくる fetch。省略時はグローバル */
 type Fetcher = typeof globalThis.fetch;
 
 /** list 形式 API のレスポンス */
@@ -31,16 +28,16 @@ type ListResponse<T> = {
 };
 
 /**
- * ビルド中だけレスポンスを使い回す。
+ * 同じタブで開いている間はレスポンスを使い回す。
  *
- * TOP と NEWS のように同じ API を複数のページが使うので、prerender 1 回に
- * つき 1 リクエストで済ませる。dev では毎回取りに行くため、CMS 側の変更は
- * リロードだけで反映される。
+ * TOP と NEWS のように同じ API を複数のページが使うので、ページ遷移の
+ * たびに取り直さずに済ませる。リロードすれば取り直すため、CMS の更新は
+ * 再読み込みで反映される。
  */
 const cache = new Map<string, Promise<unknown>>();
 
-const request = async <T>(path: string, fetcher: Fetcher): Promise<T> => {
-	const cached = building ? (cache.get(path) as Promise<T> | undefined) : undefined;
+const request = <T>(path: string, fetcher: Fetcher): Promise<T> => {
+	const cached = cache.get(path) as Promise<T> | undefined;
 	if (cached) return cached;
 
 	const task = (async () => {
@@ -48,8 +45,8 @@ const request = async <T>(path: string, fetcher: Fetcher): Promise<T> => {
 			headers: { 'X-MICROCMS-API-KEY': API_KEY }
 		});
 
-		// 取得に失敗したまま公開されると中身の無いページになるので、
-		// 握りつぶさずビルドごと止める
+		// 取得に失敗したら握りつぶさずに投げる。
+		// load から投げた例外は SvelteKit がエラーページとして受ける
 		if (!res.ok) {
 			throw new Error(`microCMS の取得に失敗しました: ${path}（${res.status} ${res.statusText}）`);
 		}
@@ -57,7 +54,10 @@ const request = async <T>(path: string, fetcher: Fetcher): Promise<T> => {
 		return (await res.json()) as T;
 	})();
 
-	if (building) cache.set(path, task);
+	cache.set(path, task);
+
+	// 失敗した結果を残すと、次にこのページへ来てもずっと失敗したままになる
+	task.catch(() => cache.delete(path));
 
 	return task;
 };

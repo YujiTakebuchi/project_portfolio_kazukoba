@@ -30,7 +30,7 @@ ABOUT ページの名前 / 写真 / ステートメント / SNS）は `src/lib/d
 ### 取得のしくみ
 
 ```
-src/lib/server/cms/
+src/lib/cms/
 ├─ client.ts   エンドポイント・API キー・取得（リストは 100 件ずつ全件）
 ├─ types.ts    microCMS のレスポンス型（管理画面のスキーマを写したもの）
 ├─ image.ts    画像 URL の縮小・webp 変換
@@ -39,15 +39,30 @@ src/lib/server/cms/
 ```
 
 コンポーネントは今まで通り `src/lib/data/types.ts` の型だけを見る。
-CMS のスキーマが変わっても直すのは `src/lib/server/cms/` だけ。
+CMS のスキーマが変わっても直すのは `src/lib/cms/` だけ。
 
-**全ページ prerender なので、CMS を叩くのはビルド時だけ**。結果は HTML と
-`__data.json` に焼き込まれ、公開後のサイトから microCMS への通信は起きない。
-**CMS を更新したら再ビルド（再デプロイ）する。**
+**CMS を叩くのはブラウザ（CSR）**。ページの HTML はビルド時に書き出すが、
+中身は空のまま焼かれていて、読み込み後に microCMS から取り直して流し込む。
+**CMS を更新したら再ビルドなしで反映される**（訪問者の再読み込みで新しくなる）。
 
-API キーはフロント用の read only で `src/lib/server/cms/client.ts` に直書きしてある。
-`$lib/server` 配下は SvelteKit がクライアントからの import を弾くため、
-ブラウザ向けのバンドルには含まれない。
+振り分けは各ページの `+page.ts`。ビルド時と SSR では `EMPTY_*`（空の一覧）を
+返し、ブラウザでだけ実データを取る。
+
+```ts
+export const load: PageLoad = ({ fetch }) => (browser ? getTop(fetch) : EMPTY_TOP);
+```
+
+取得は「タブを開いている間」だけ使い回す（`client.ts` のキャッシュ）。TOP と
+NEWS のように同じ API を使うページを行き来しても取り直さない。
+
+初回表示のローディング画面（4s）の裏で取りに行くため、待ち時間は体感に出にくい。
+ただし**本文が HTML に入らないので、検索エンジンや SNS のカードは JS を実行しない
+限り空のページを見る**。SEO を効かせたくなったら SSR（adapter の差し替え）か、
+ビルド時取得へ戻す判断が必要。
+
+API キーはフロント用の read only で `src/lib/cms/client.ts` に直書きしてある。
+ブラウザから叩くのでバンドルに含まれる。キーを取り出せば誰でも CMS の中身を
+取得できる（書き換えはできない）。
 
 ### 画像
 
@@ -61,9 +76,12 @@ microCMS は入稿された原寸（KV は 6000px 幅）を返すので、画像
   セレクトフィールドから組み立てる。ボタンの並び順は `src/lib/server/cms/index.ts`
   の `CATEGORY_ORDER`。CMS で選択肢を増やした分は末尾に並ぶので、間に入れたい
   ときはこの配列を直す。
-- **NEWS が 10 件以下**のうちは 2 ページ目が無く、`/news/page/[page]` は 1 つも
-  書き出されない。これは正常なので `vite.config.ts` の `handleUnseenRoutes` で
-  このルートだけ許可している。
+- **NEWS の詳細（`/news/<id>`）とページ送り（`/news/page/<n>`）は HTML を
+  書き出さない**。記事を取るのがブラウザなので、どんな URL があるかがビルド時に
+  分からないため（両ページの `+page.ts` に `prerender = false` / `ssr = false`）。
+  代わりに `adapter-static` の `fallback`（`build/200.html`）を返して、
+  クライアント側のルーターに組み立てさせる。返すのは
+  [worker/index.ts](worker/index.ts)。
 - **NEWS の日付**は自由入力。`2026.7.26` のように 1 日に定まる書き方のときだけ
   `<time datetime>` が付く（`2026.7.19–25` のような会期表記は表示のみ）。
 
@@ -76,6 +94,10 @@ BASIC 認証をかける。設定は [wrangler.jsonc](wrangler.jsonc)。
 
 アセットは既定だと Worker より先に返ってしまい認証を素通りするため、
 `assets.run_worker_first: true` で全リクエストを Worker に通してから `env.ASSETS.fetch()` している。
+
+アセットに無いページ要求（NEWS の詳細・ページ送り）は、Worker が SPA フォールバックの
+`build/200.html` を 200 で返す。画像やスクリプトの 404 まで HTML にしないよう、
+画面遷移（`Sec-Fetch-Mode: navigate`）か `Accept: text/html` のときだけ振り替えている。
 
 ### 認証情報
 
@@ -282,8 +304,7 @@ src/
 │  ├─ data/
 │  │  ├─ types.ts              ページに流し込むデータ型
 │  │  └─ *.json                CMS に項目が無いページの中身
-│  └─ server/
-│     └─ cms/                  microCMS の取得と型の詰め替え
+│  └─ cms/                     microCMS の取得と型の詰め替え（ブラウザで走る）
 ├─ routes/
 │  ├─ +layout.svelte        スプリットレイアウト / グローバル改行クラス
 │  ├─ +layout.ts            prerender = true
