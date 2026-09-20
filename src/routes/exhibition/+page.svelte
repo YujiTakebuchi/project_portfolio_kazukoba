@@ -3,156 +3,15 @@
 	import Header from '$lib/components/layout/Header.svelte';
 	import MoviePlayer from '$lib/components/ui/MoviePlayer.svelte';
 	import Seo from '@/lib/components/Seo.svelte';
-	import type { ExhibitionEntry } from '@/lib/data/types';
 
 	/**
-	 * EXHIBITION ページ（カンプの EXHIBITION_三代写心_pc / _sp、
-	 * EXHIBITION_Duality_pc / _sp）
-	 *
-	 * 本文幅はカンプ通り SP 335/375（= コンテンツ幅）、PC 1040/1280。
-	 * ABOUT / NEWS と同じ扱い。
-	 *
-	 * 見出しと切り替えボタンはカンプ上の位置（PC y=121 / 198）に置き、
-	 * その下に PC = 2 カラム（470 / 60 / 510 = 1040）を敷く。
-	 * 左（展示タイトル・会期）は position: sticky で貼り付けてあり、
-	 * スクロールするのは右のポスター・動画・開催情報だけになる。
-	 * top はヘッダーの下、カンプの見出しと同じ高さ。position: fixed と
-	 * 違って記事が終われば一緒に流れるので、フッターにかぶらない。
-	 * SP は 1 カラムでそのまま縦積み。
-	 *
-	 * 展示の切り替えはページ遷移ではなく、その場で中身を差し替える。
-	 * タイトル（左カラム）と記事（右カラム）の両方が入れ替わり、
-	 * 切り替えボタンはその 2 つより上にあるため、tablist（tabpanel が
-	 * tab の直後の 1 ブロックになる形）には収まらない。そのため
-	 * 「押した状態」を持つ普通のボタン（aria-pressed）で組んでいる。
-	 *
-	 * ポスターの枚数・動画の本数・開催情報の項目は展示ごとに違うので、
-	 * 下の配列をそのまま流し込む。動画がまだ無いもの（三代写心の告知動画）は
-	 * youtubeId を持たせず、枠と制作中の文言だけを出す。
-	 *
-	 * 開催情報の本文の改行はここに書いた改行がそのまま出る（CSS の
-	 * white-space: pre-line）。行頭に空白が入らないよう、字下げせずに書くこと。
+	 * EXHIBITION ページ。PC は 2 カラム（左の展示タイトル・会期は sticky）、SP は 1 カラム。
+	 * 展示 1 件 = 1 つの {#snippet}。切り替えボタンはページ遷移せず中身を差し替える。
+	 * 期間のつなぎ文字は、英数表記が実体参照の &ndash;、日本語表記が 〜。
 	 */
 
-	/** 並び順がそのまま切り替えボタンの並び順。先頭（最新）が初期表示 */
-	const ITEMS: ExhibitionEntry[] = [
-		{
-			id: 'sandaishashin-2026',
-			label: '三代写心（2026）',
-			images: [
-				{
-					src: '/img/exhibition/sandaishashin-01.webp',
-					alt: '「三代写心」展示会ポスター（表）',
-					width: 616,
-					height: 874
-				},
-				{
-					src: '/img/exhibition/sandaishashin-02.webp',
-					alt: '「三代写心」展示会ポスター（裏）',
-					width: 633,
-					height: 879
-				}
-			],
-			title: '三代写心',
-			subtitle: 'ーカメラ三陽堂に宿った三人の写真家ー',
-			date: '2026.10.14 - 19',
-			movies: [{ title: '告知動画' }],
-			sections: [
-				{
-					heading: '会期',
-					lines: [
-						{
-							text: `2026年10月14日(水)〜10月19日(月)
-平日 11:00〜19:00　土日祝 10:30〜18:30`
-						},
-						{ note: '※初日のみ15:00開始、最終日のみ16:00終了' }
-					]
-				},
-				{
-					heading: '会場',
-					lines: [
-						{
-							text: `Gallery 蔵
-御茶ノ水ソラシティ B1F　〒101-0062 東京都千代田区神田駿河台4-6`
-						}
-					]
-				},
-				{
-					heading: 'ギャラリートークショー',
-					lines: [
-						{
-							text: `会場：お茶ナビゲート
-10月17日(土) 14:00〜15:00
-スペシャルゲスト：菅原 隆治 (CAPA編集長)`
-						}
-					]
-				}
-			]
-		},
-		{
-			id: 'duality-2019',
-			label: 'Duality（2019）',
-			images: [
-				{
-					src: '/img/exhibition/duality-01.webp',
-					alt: '「Duality」展示会ポスター',
-					width: 599,
-					height: 856
-				}
-			],
-			title: 'Duality',
-			titleLang: 'en',
-			date: '2019.2.27 - 3.10',
-			movies: [
-				{
-					youtubeId: '2blugkano84',
-					poster: {
-						src: '/img/exhibition/movie-2blugkano84.jpg',
-						alt: '',
-						width: 1280,
-						height: 720
-					},
-					title: 'ドキュメンタリービデオ「撮影日和 小林一隆と写真の旅」'
-				},
-				{
-					youtubeId: '0EQXQH5k2uc',
-					poster: {
-						src: '/img/exhibition/movie-0EQXQH5k2uc.jpg',
-						alt: '',
-						width: 1280,
-						height: 720
-					},
-					title: '小林一隆 トークショー メッセージ'
-				}
-			],
-			sections: [
-				{
-					heading: '会期',
-					lines: [
-						{ text: '2019年2月27日(水)〜3月10日(日)', note: '※3月4日(月)休み' },
-						{ text: '16:30〜23:00（日曜15:00〜21:30）' }
-					]
-				},
-				{
-					heading: '会場',
-					lines: [{ text: 'Photo Bar [sa-yo: ]' }]
-				},
-				{
-					heading: 'ギャラリートークショー',
-					lines: [
-						{ text: '2019年3月1日(金) 19:00〜20:00', sub: '— another sky —' },
-						{ text: 'スペシャルゲスト：桃井一至（写真家）' },
-						{ text: '2019年3月2日(土) 19:00〜20:00', sub: '— snow —', gapBefore: true }
-					]
-				}
-			]
-		}
-	];
-
-	/** 表示中の展示の index。カンプ通り先頭（最新）が初期表示 */
-	let index = $state(0);
-
-	const current = $derived(ITEMS[index]);
+	/** 表示中の展示。カンプ通り先頭（最新）が初期表示 */
+	let current: 'sandaishashin' | 'duality' = $state('sandaishashin');
 </script>
 
 <Seo title="EXHIBITION" description="写真家 Kazu Kobayashi の展示会情報です。" />
@@ -164,82 +23,216 @@
 		<h1 class="exhibition__heading">EXHIBITION</h1>
 
 		<div class="switch" role="group" aria-label="展示の切り替え">
-			{#each ITEMS as item, i (item.id)}
-				<button
-					class="switch__btn"
-					class:switch__btn--current={i === index}
-					type="button"
-					aria-pressed={i === index}
-					onclick={() => (index = i)}
-				>
-					{item.label}
-				</button>
-			{/each}
+			<button
+				class="switch__btn"
+				class:switch__btn--current={current === 'sandaishashin'}
+				type="button"
+				aria-pressed={current === 'sandaishashin'}
+				onclick={() => (current = 'sandaishashin')}
+			>
+				三代写心（2026）
+			</button>
+			<button
+				class="switch__btn"
+				class:switch__btn--current={current === 'duality'}
+				type="button"
+				aria-pressed={current === 'duality'}
+				onclick={() => (current = 'duality')}
+			>
+				Duality（2019）
+			</button>
 		</div>
 
 		<div class="exhibition__body">
-			<div class="exhibition__side">
-				<div class="exhibition__head">
-					<h2 class="exhibition__title" class:exhibition__title--en={current.titleLang === 'en'}>
-						{current.title}
-					</h2>
-					{#if current.subtitle}
-						<p class="exhibition__subtitle">{current.subtitle}</p>
-					{/if}
-				</div>
-
-				<p class="exhibition__date">{current.date}</p>
-			</div>
-
-			<div class="exhibition__main">
-				<div class="posters">
-					{#each current.images as image, i (image.src)}
-						<img
-							class="posters__img"
-							src={image.src}
-							alt={image.alt}
-							width={image.width}
-							height={image.height}
-							loading={i === 0 ? 'eager' : 'lazy'}
-							decoding="async"
-						/>
-					{/each}
-				</div>
-
-				{#if current.movies.length > 0}
-					<section class="movies">
-						<h3 class="movies__label">MOVIE</h3>
-
-						<div class="movies__list">
-							{#each current.movies as movie (movie.title)}
-								<MoviePlayer {movie} />
-							{/each}
-						</div>
-					</section>
-				{/if}
-
-				<dl class="info">
-					{#each current.sections as section (section.heading)}
-						<div class="info__row">
-							<dt class="info__heading">{section.heading}</dt>
-							<dd>
-								{#each section.lines as line}
-									<p class="info__line" class:info__line--gap={line.gapBefore}>
-										{#if line.text}<span class="info__text">{line.text}</span>{/if}
-										{#if line.sub}<span class="info__sub">{line.sub}</span>{/if}
-										{#if line.note}<span class="info__note">{line.note}</span>{/if}
-									</p>
-								{/each}
-							</dd>
-						</div>
-					{/each}
-				</dl>
-			</div>
+			{#if current === 'sandaishashin'}
+				{@render sandaishashin()}
+			{:else}
+				{@render duality()}
+			{/if}
 		</div>
 	</div>
 </main>
 
 <Footer />
+
+<!-- 三代写心（2026） -->
+{#snippet sandaishashin()}
+	<div class="exhibition__side">
+		<div class="exhibition__head">
+			<h2 class="exhibition__title">三代写心</h2>
+			<p class="exhibition__subtitle">ーカメラ三陽堂に宿った三人の写真家ー</p>
+		</div>
+
+		<p class="exhibition__date">2026.10.14&ndash;19</p>
+	</div>
+
+	<div class="exhibition__main">
+		<div class="posters">
+			<img
+				class="posters__img"
+				src="/img/exhibition/sandaishashin-01.webp"
+				alt="「三代写心」展示会ポスター（表）"
+				width="616"
+				height="874"
+				loading="eager"
+				decoding="async"
+			/>
+			<img
+				class="posters__img"
+				src="/img/exhibition/sandaishashin-02.webp"
+				alt="「三代写心」展示会ポスター（裏）"
+				width="633"
+				height="879"
+				loading="lazy"
+				decoding="async"
+			/>
+		</div>
+
+		<section class="movies">
+			<h3 class="movies__label">MOVIE</h3>
+
+			<div class="movies__list">
+				<MoviePlayer movie={{ title: '告知動画' }} />
+			</div>
+		</section>
+
+		<dl class="info">
+			<div class="info__row">
+				<dt class="info__heading">会期</dt>
+				<dd>
+					<p class="info__line">
+						<span class="info__text"
+							>2026年10月14日(水)〜10月19日(月)<br />平日 11:00〜19:00　土日祝 10:30〜18:30</span
+						>
+					</p>
+					<p class="info__line">
+						<span class="info__note">※初日のみ15:00開始、最終日のみ16:00終了</span>
+					</p>
+				</dd>
+			</div>
+
+			<div class="info__row">
+				<dt class="info__heading">会場</dt>
+				<dd>
+					<p class="info__line">
+						<span class="info__text"
+							>Gallery 蔵<br />御茶ノ水ソラシティ B1F　〒101-0062 東京都千代田区神田駿河台4-6</span
+						>
+					</p>
+				</dd>
+			</div>
+
+			<div class="info__row">
+				<dt class="info__heading">ギャラリートークショー</dt>
+				<dd>
+					<p class="info__line">
+						<span class="info__text"
+							>会場：お茶ナビゲート<br />10月17日(土) 14:00〜15:00<br />スペシャルゲスト：菅原 隆治
+							(CAPA編集長)</span
+						>
+					</p>
+				</dd>
+			</div>
+		</dl>
+	</div>
+{/snippet}
+
+<!-- Duality（2019） -->
+{#snippet duality()}
+	<div class="exhibition__side">
+		<div class="exhibition__head">
+			<h2 class="exhibition__title exhibition__title--en">Duality</h2>
+		</div>
+
+		<p class="exhibition__date">2019.2.27&ndash;3.10</p>
+	</div>
+
+	<div class="exhibition__main">
+		<div class="posters">
+			<img
+				class="posters__img"
+				src="/img/exhibition/duality-01.webp"
+				alt="「Duality」展示会ポスター"
+				width="599"
+				height="856"
+				loading="eager"
+				decoding="async"
+			/>
+		</div>
+
+		<section class="movies">
+			<h3 class="movies__label">MOVIE</h3>
+
+			<div class="movies__list">
+				<MoviePlayer
+					movie={{
+						youtubeId: '2blugkano84',
+						poster: {
+							src: '/img/exhibition/movie-2blugkano84.jpg',
+							alt: '',
+							width: 1280,
+							height: 720
+						},
+						title: 'ドキュメンタリービデオ「撮影日和 小林一隆と写真の旅」'
+					}}
+				/>
+				<MoviePlayer
+					movie={{
+						youtubeId: '0EQXQH5k2uc',
+						poster: {
+							src: '/img/exhibition/movie-0EQXQH5k2uc.jpg',
+							alt: '',
+							width: 1280,
+							height: 720
+						},
+						title: '小林一隆 トークショー メッセージ'
+					}}
+				/>
+			</div>
+		</section>
+
+		<dl class="info">
+			<div class="info__row">
+				<dt class="info__heading">会期</dt>
+				<dd>
+					<p class="info__line">
+						<span class="info__text">2019年2月27日(水)〜3月10日(日)</span>
+						<span class="info__note">※3月4日(月)休み</span>
+					</p>
+					<p class="info__line">
+						<span class="info__text">16:30〜23:00（日曜15:00〜21:30）</span>
+					</p>
+				</dd>
+			</div>
+
+			<div class="info__row">
+				<dt class="info__heading">会場</dt>
+				<dd>
+					<p class="info__line">
+						<span class="info__text">Photo Bar [sa-yo: ]</span>
+					</p>
+				</dd>
+			</div>
+
+			<div class="info__row">
+				<dt class="info__heading">ギャラリートークショー</dt>
+				<dd>
+					<p class="info__line">
+						<span class="info__text">2019年3月1日(金) 19:00〜20:00</span>
+						<span class="info__sub">— another sky —</span>
+					</p>
+					<p class="info__line">
+						<span class="info__text">スペシャルゲスト：桃井一至（写真家）</span>
+					</p>
+					<p class="info__line info__line--gap">
+						<span class="info__text">2019年3月2日(土) 19:00〜20:00</span>
+						<span class="info__sub">— snow —</span>
+					</p>
+				</dd>
+			</div>
+		</dl>
+	</div>
+{/snippet}
 
 <style lang="scss">
 	@use "@/styles/var" as v;
@@ -442,6 +435,7 @@
 	// -----------------------------------------------------------
 	//
 	// 項目名（会期 / 会場 / …）と中身の組なので dl で組む。
+	// 本文の改行はマークアップの <br> で入れる。
 	.info {
 		display: flex;
 		flex-direction: column;
@@ -495,11 +489,6 @@
 			@include m.mq("pc") {
 				margin-top: f.vwPc(15);
 			}
-		}
-
-		&__text,
-		&__sub {
-			white-space: pre-line;
 		}
 
 		// 本文に続く文字列（sub）は PC / モバイルとも本文の次の行に置く。
