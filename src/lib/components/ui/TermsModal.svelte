@@ -62,13 +62,13 @@
 		</button>
 
 		<section class="terms__section">
-			<h2 class="terms__title" id="termsHeading">利用規約</h2>
+			<h2 class="terms__title" id="termsHeading">著作権・画像利用について</h2>
 			<!-- 改行がそのまま出る（white-space: pre-line）ので、1 段落は 1 行で書く -->
 			<p class="terms__text">本サイトに掲載している写真・作品の著作権は、特記のない限りKazu Kobayashiに帰属します。 写真・作品の転載、出版、その他の利用をご希望の場合は、CONTACTよりお問い合わせください。</p>
 		</section>
 
 		<section class="terms__section">
-			<h2 class="terms__title terms__title--en">Terms of Service</h2>
+			<h2 class="terms__title terms__title--en">Copyright / Image Use</h2>
 			<p class="terms__text terms__text--en">All photographs and artworks on this website are copyrighted by Kazu Kobayashi unless otherwise noted. For reproduction, publication, licensing, or other use, please contact us through the CONTACT page.</p>
 		</section>
 	</div>
