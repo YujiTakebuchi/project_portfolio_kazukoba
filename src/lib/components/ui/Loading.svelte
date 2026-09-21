@@ -132,7 +132,15 @@
 		aria-hidden="true"
 	>
 		<span class="loading__gauge"></span>
-		<p class="loading__title">{SITE_TITLE}</p>
+		<!-- 文字詰めを再現するため文字画像（static/img/logo/logo-loading.svg）。
+		     親ごと aria-hidden だが、画像が読めない環境向けに代替テキストは入れておく -->
+		<img
+			class="loading__title"
+			src="/img/logo/logo-loading.svg"
+			alt={SITE_TITLE}
+			width="407"
+			height="37"
+		/>
 	</div>
 {/if}
 
@@ -195,20 +203,25 @@
 			}
 		}
 
-		// --- タイトル（カンプ: 中央の線から 92 下、Montserrat 30、白） ---
+		// --- タイトル（カンプ: 中央の線から 92 下、Montserrat 30、SOFT WHITE） ---
+		//
+		// カンプは 1 文字ずつ字間を詰めているので、文字画像にしている。
+		// 画像はテキストボックス（幅 = 字送りの合計、高さ = 行の高さ auto）
+		// ごと書き出してあり、カンプの座標をそのまま当てられる。
+		// PC / SP で字詰めは同じなので、1 枚を拡縮して使う
+		//   PC: 407.4 x 36.57（30px） / SP: 298.76 x 26.82（22px）
 		&__title {
 			position: absolute;
 			top: calc(50% + #{f.vw(60)});
 			left: 0;
-			width: 100%;
-			text-align: center;
-			// カンプの指定色。地の SUB GRAY に対してはっきり出したいので純白
-			color: #fff;
-			@include m.font(f.vw(22), 1.2, 0.07, 400, "mont");
+			right: 0;
+			width: f.vw(298.76);
+			height: auto;
+			margin-inline: auto;
 
 			@include m.mq("pc") {
 				top: calc(50% + #{f.vwPc(92)});
-				@include m.font(f.vwPc(30), 1.2, 0.07, 400, "mont");
+				width: f.vwPc(407.4);
 			}
 		}
 	}
