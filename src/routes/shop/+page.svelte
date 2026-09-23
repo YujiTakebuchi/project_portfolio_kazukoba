@@ -21,7 +21,18 @@
 		<h1 class="shop__heading">SHOP</h1>
 
 		<div class="shop__soon">
-			<p class="shop__title">Coming Soon</p>
+			<!--
+				カンプの「Coming Soon」は文字ごとに字間を詰めてあるので、
+				フォント指定では再現できない。Figma から書き出した SVG
+				（文字はパス化済み）をそのまま置く。
+			-->
+			<img
+				class="shop__title"
+				src="/img/shop/coming-soon.svg"
+				alt="Coming Soon"
+				width="295"
+				height="38"
+			/>
 			<p class="shop__note">Open after the exhibition</p>
 		</div>
 	</div>
@@ -48,8 +59,8 @@
 		// Coming Soon の上下にこの分を確保して、見出しと重ならないようにする
 		--head-h: #{f.vw(40)} + #{f.vw(24)} * 1.2;
 
-		// 見出しと Coming Soon を同じセルに重ねる。Coming Soon の中央の
-		// 基準は padding で決める（SP は見出しの下、PC はエリア全体）
+		// 見出しと Coming Soon を同じセルに重ねる。Coming Soon は見出しの
+		// 下に残るエリア（見出し下端〜フッター上端）に対して天地中央になる
 		display: grid;
 		flex: 1 0 auto;
 		width: var(--content-w);
@@ -82,24 +93,25 @@
 			flex-direction: column;
 			justify-content: center;
 			align-items: center;
-			gap: f.vw(10);
-			// SP は見出しの下に残るエリアに対して天地中央（上だけ見出し分空ける）
+			// 文字の実寸どうしの間隔（画像化で行送りの余白が無くなったぶん広げる）
+			gap: f.vw(22);
+			// 見出しの下に残るエリアに対して天地中央（上だけ見出し分空ける）
 			padding-top: calc(var(--head-h));
 			text-align: center;
 
-			// PC はヘッダー〜フッター間の全体に対して天地中央（上下とも見出し分空ける）
 			@include m.mq("pc") {
-				gap: f.vwPc(10);
-				padding-bottom: calc(var(--head-h));
+				gap: f.vwPc(25);
 			}
 		}
 
+		// 画像の幅はカンプの文字の実寸（PC 40px / SP 32px 相当）。
+		// 高さは元の比率のまま追従させる
 		&__title {
-			color: v.$c-accent;
-			@include m.font(f.vw(32), 1.7, 0.07, 400, "mont");
+			width: f.vw(236);
+			height: auto;
 
 			@include m.mq("pc") {
-				@include m.font(f.vwPc(40), 1.7, 0.07, 400, "mont");
+				width: f.vwPc(295);
 			}
 		}
 
