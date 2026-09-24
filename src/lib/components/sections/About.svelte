@@ -31,7 +31,7 @@
 					<p class="about__fullName">Kazu Kobayashi</p>
 				</div>
 				<p class="about__roles">
-					<span>Director & Head of Public Relations: Syukoukai Art Society</span><span>President: Adachi Photography Association</span><span>Doyu: Japan Photographic Society</span>
+					<span>Director & Head of Public Relations, Syukoukai Art Society</span><span>President, Adachi Photography Association</span><span>Doyu, Japan Photographic Society</span>
 				</p>
 			</div>
 		</div>

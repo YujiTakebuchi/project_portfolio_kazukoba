@@ -80,7 +80,9 @@
 <header class="header">
 	<Container>
 		<div class="header__inner">
-			<a class="header__logo" href="/">{SITE_TITLE}</a>
+			<a class="header__logo" href="/">
+				<img src="/img/logo/logo.svg" alt={SITE_TITLE} width="269" height="24" />
+			</a>
 
 			<nav class="header__nav" aria-label="グローバルナビゲーション">
 				<ul class="header__list">
@@ -134,7 +136,9 @@
 		<!-- カンプではパネルの上にヘッダーがそのまま乗っている。
 		     ハンバーガーの位置がバツ印に置き換わる -->
 		<div class="drawer__bar">
-			<a class="drawer__logo" href="/" onclick={close}>{SITE_TITLE}</a>
+			<a class="drawer__logo" href="/" onclick={close}>
+				<img src="/img/logo/logo.svg" alt={SITE_TITLE} width="269" height="24" />
+			</a>
 
 			<button class="drawer__close" type="button" onclick={close} aria-label="メニューを閉じる">
 				<span class="menuIcon" class:menuIcon--close={isOpen}>
@@ -231,12 +235,29 @@
 			align-items: center;
 		}
 
+		// --- ロゴ ---
+		//
+		// カンプは 1 文字ずつ字間を詰めているので、文字画像にしている
+		// （static/img/logo/logo.svg）。画像はテキストボックス（幅 = 字送りの
+		// 合計、高さ = 行の高さ auto）ごと書き出してあり、文字のときと同じ
+		// 箱の大きさで行に収まる。PC / SP で字詰めは同じなので 1 枚を拡縮する
+		//   SP: 242.1 x 21.94（18px） / PC: 269 x 24.38（20px）
 		&__logo {
-			@include m.font(f.vw(18), 1.2, 0.07, 400, "mont");
+			flex: none;
+			display: block;
+			width: f.vw(242.1);
 			@include m.linkHover;
 
 			@include m.mq("pc") {
-				@include m.font(f.vwPc(20), 1.2, 0.07, 400, "mont");
+				width: f.vwPc(269);
+			}
+
+			img {
+				display: block;
+				width: 100%;
+				height: auto;
+				// #454545 で書き出してあるので、アイコンと同じくページの配色に合わせる
+				filter: var(--icon-filter);
 			}
 		}
 
@@ -374,9 +395,19 @@
 			padding-top: f.vw(26);
 		}
 
+		// ヘッダーのロゴ（.header__logo）と同じ画像・同じ大きさ
 		&__logo {
-			@include m.font(f.vw(18), 1.2, 0.07, 400, "mont");
+			flex: none;
+			display: block;
+			width: f.vw(242.1);
 			@include m.linkHover;
+
+			img {
+				display: block;
+				width: 100%;
+				height: auto;
+				filter: var(--icon-filter);
+			}
 		}
 
 		// ヘッダーのハンバーガーと同じ位置・同じ大きさに置く（下記 .menuIcon）
