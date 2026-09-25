@@ -12,7 +12,7 @@
 	 * 再生に切り替わったあとはプレイヤー標準の操作に任せる。
 	 * 接続先は youtube-nocookie.com。
 	 *
-	 * 動画がまだ無いもの（三代写心の告知動画）も見た目だけは出す。
+	 * 動画がまだ無いものも見た目だけは出す。
 	 * この場合は枠と再生ボタンを並べるだけで、押せる要素は作らない。
 	 */
 
@@ -30,7 +30,7 @@
 	);
 </script>
 
-<div class="movie">
+<div class="movie" class:movie--short={movie.short}>
 	<div class="movie__frame">
 		{#if !movie.youtubeId}
 			{#if movie.poster}
@@ -101,6 +101,11 @@
 			position: relative;
 			aspect-ratio: 16 / 9;
 			background-color: #000;
+		}
+
+		// ショート動画は縦長 9:16
+		&--short &__frame {
+			aspect-ratio: 9 / 16;
 		}
 
 		&__player {

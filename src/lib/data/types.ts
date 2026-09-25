@@ -120,8 +120,10 @@ export type ExhibitionMovie = {
 	title: string;
 	/** YouTube の動画 ID（https://youtu.be/<id> の <id> の部分） */
 	youtubeId?: string;
-	/** 再生前に出すサムネイル。カンプの縦横比は 16:9 */
+	/** 再生前に出すサムネイル。縦横比は 16:9（short なら 9:16） */
 	poster?: Photo;
+	/** YouTube ショート（縦長 9:16）なら true */
+	short?: boolean;
 };
 
 /** NEWS の 1 件 */

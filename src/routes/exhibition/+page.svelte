@@ -92,7 +92,19 @@
 			<h3 class="movies__label">MOVIE</h3>
 
 			<div class="movies__list">
-				<MoviePlayer movie={{ title: '告知動画' }} />
+				<MoviePlayer
+					movie={{
+						youtubeId: 'SJsyE-OGt-M',
+						short: true,
+						poster: {
+							src: '/img/exhibition/movie_sandai_thumb.webp',
+							alt: '',
+							width: 955,
+							height: 1704
+						},
+						title: '告知動画'
+					}}
+				/>
 			</div>
 		</section>
 
