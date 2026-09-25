@@ -106,9 +106,9 @@
 		// ショート動画は縦長 9:16
 		&--short {
 			width: 70%;
-		}
-		&__frame {
-			aspect-ratio: 9 / 16;
+			&__frame {
+				aspect-ratio: 9 / 16;
+			}
 		}
 
 		&__player {
