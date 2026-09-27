@@ -56,7 +56,8 @@ export type CmsExif = {
 /** WORKS の 1 点 */
 export type CmsWork = CmsMeta & {
 	title: string;
-	picture: CmsImage;
+	/** 必須項目だが、参照先のメディアが消えていると返ってこないことがある */
+	picture?: CmsImage;
 	/** カテゴリ（複数選択）。ラベルがそのまま値になる */
 	label?: string[];
 	exif?: CmsExif;

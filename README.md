@@ -52,6 +52,9 @@ CMS のスキーマが変わっても直すのは `src/lib/cms/` だけ。
 export const load: PageLoad = ({ fetch }) => (browser ? getTop(fetch) : EMPTY_TOP);
 ```
 
+出すのは**公開済みのコンテンツだけ**。`works` / `news` は `filters=publishedAt[exists]`
+で下書きを除き、TOP の参照（works / news）は `publishedAt` の無いものを `index.ts` で落とす。
+
 取得は「タブを開いている間」だけ使い回す（`client.ts` のキャッシュ）。TOP と
 NEWS のように同じ API を使うページを行き来しても取り直さない。
 

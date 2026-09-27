@@ -144,6 +144,14 @@ const toArticle = (news: CmsNews): NewsArticle => ({
 // 取得
 // -------------------------------------------------------------------
 
+/**
+ * 公開済みのコンテンツか
+ *
+ * TOP の works / news は参照フィールドなので、リスト API の filters が
+ * 効かない。下書きの作品・記事を選んでいても出さないようにここで落とす。
+ */
+const isPublished = (content: { publishedAt?: string }): boolean => Boolean(content.publishedAt);
+
 type Fetcher = typeof globalThis.fetch;
 
 /** TOP（KV / WORKS / NEWS の 3 セクション分） */
@@ -169,13 +177,13 @@ export const getTop = async (fetcher?: Fetcher): Promise<TopData> => {
 			}))
 		},
 		works: {
-			images: (top.works ?? []).map((work) =>
+			images: (top.works ?? []).filter(isPublished).map((work) =>
 				toPhoto(work.picture, work.title, MAX_WIDTH.topWorks)
 			),
 			link: LINK.works
 		},
 		news: {
-			items: (top.news ?? []).map((news) => ({
+			items: (top.news ?? []).filter(isPublished).map((news) => ({
 				date: news.date,
 				title: news.title,
 				isNew: news.label?.includes(NEW_LABEL),

@@ -27,7 +27,7 @@
 		<SectionTitle text="WORKS" />
 
 		<div class="works__grid">
-			{#each data.images as image (image.src)}
+			{#each data.images as image, i (i)}
 				<img
 					class="works__img"
 					src={image.src}

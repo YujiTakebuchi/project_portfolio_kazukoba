@@ -30,9 +30,13 @@ export const imageUrl = (image: CmsImage, maxWidth: number): string => {
 	return `${image.url}?${params}`;
 };
 
-/** サイト側の Photo（読み込み前の場所取り用にサイズ付き）にする */
-export const toPhoto = (image: CmsImage, alt: string, maxWidth: number): Photo => ({
-	src: imageUrl(image, maxWidth),
-	alt,
-	...sizeOf(image, maxWidth)
-});
+/**
+ * サイト側の Photo（読み込み前の場所取り用にサイズ付き）にする
+ *
+ * 画像が未入稿・削除済みで返ってこないときは、ページごと落とさずに
+ * src を空にして画像だけ出ない状態にする。
+ */
+export const toPhoto = (image: CmsImage | undefined, alt: string, maxWidth: number): Photo =>
+	image?.url
+		? { src: imageUrl(image, maxWidth), alt, ...sizeOf(image, maxWidth) }
+		: { src: '', alt };

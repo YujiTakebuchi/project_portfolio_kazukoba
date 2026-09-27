@@ -128,7 +128,7 @@
 		<div class="gallery">
 			{#each columns as column, c (c)}
 				<ul class="gallery__col">
-					{#each column as { item, index } (item.src)}
+					{#each column as { item, index } (index)}
 						<li>
 							<button
 								class="gallery__thumb"

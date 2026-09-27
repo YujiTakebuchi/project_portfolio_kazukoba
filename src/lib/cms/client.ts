@@ -16,6 +16,14 @@ const API_KEY = 'mBu2V3LAJE1q34jm1vo8a7HPCI8Ad20La59H';
 /** list 形式 API の 1 回あたりの取得件数（microCMS の上限） */
 const LIMIT = 100;
 
+/**
+ * 公開済みのコンテンツだけに絞る条件
+ *
+ * 一度も公開していない下書きは publishedAt を持たない。API キーの権限で
+ * 下書きが返ってくる設定になっていても、サイトには出さない。
+ */
+const PUBLISHED_FILTER = encodeURIComponent('publishedAt[exists]');
+
 /** SvelteKit の load が渡してくる fetch。省略時はグローバル */
 type Fetcher = typeof globalThis.fetch;
 
@@ -66,14 +74,14 @@ const request = <T>(path: string, fetcher: Fetcher): Promise<T> => {
 export const getObject = <T>(endpoint: string, fetcher: Fetcher = fetch): Promise<T> =>
 	request<T>(endpoint, fetcher);
 
-/** リスト形式 API（works / news）を全件取る */
+/** リスト形式 API（works / news）を公開済みのものだけ全件取る */
 export const getList = async <T>(endpoint: string, fetcher: Fetcher = fetch): Promise<T[]> => {
 	const contents: T[] = [];
 
 	// 1 回の上限が 100 件なので、総件数に届くまで offset をずらして繰り返す
 	for (let offset = 0; ; offset += LIMIT) {
 		const page = await request<ListResponse<T>>(
-			`${endpoint}?limit=${LIMIT}&offset=${offset}`,
+			`${endpoint}?limit=${LIMIT}&offset=${offset}&filters=${PUBLISHED_FILTER}`,
 			fetcher
 		);
 
