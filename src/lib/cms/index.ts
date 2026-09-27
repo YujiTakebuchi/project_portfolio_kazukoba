@@ -80,7 +80,7 @@ const settingsOf = (exif: CmsExif | undefined): string | undefined => {
 	if (!exif) return undefined;
 
 	// CMS は数値だけを入稿するので、単位は表示側で付ける
-	const shutterSpeed = exif.shutterSpeed ? `${exif.shutterSpeed} sec.` : undefined;
+	const shutterSpeed = exif.shutterSpeed ? `${exif.shutterSpeed} s` : undefined;
 	const exposure = exif.exposure ? `${exif.exposure}EV` : undefined;
 
 	// 絞りとシャッター速度は 1 つにまとめる。片方しか無ければそのまま出す
